@@ -1,0 +1,350 @@
+[
+  {
+    "id": "TC-01",
+    "name": "Standard Enterprise Engineering Offer",
+    "category": "Legitimate-looking opportunity",
+    "inputs": {
+      "company_name": "Microsoft Corporation",
+      "job_title": "Senior Cloud Software Engineer",
+      "recruitment_channel": "LinkedIn",
+      "website": "https://microsoft.com",
+      "recruiter_email": "recruiter@microsoft.com",
+      "payment_asked": "No",
+      "raw_message": "Our engineering leadership was impressed by your distributed systems work and invites you to interview for a Senior Software Engineer position at Microsoft."
+    },
+    "expected_assessment": "LOW CONCERN",
+    "expected_payment_flag": false,
+    "description": "Consistent corporate domain, matching public enterprise, standard professional outreach."
+  },
+  {
+    "id": "TC-02",
+    "name": "Upfront Laptop & Equipment Deposit",
+    "category": "Payment request",
+    "inputs": {
+      "company_name": "Apex Digital Labs",
+      "job_title": "Remote Data Clerk",
+      "recruitment_channel": "Telegram",
+      "website": "https://apexdigitallabs.online",
+      "recruiter_email": "apexrecruiter@gmail.com",
+      "payment_asked": "Yes",
+      "payment_purpose": "Equipment",
+      "payment_amount": "$150",
+      "raw_message": "You must wire a $150 refundable equipment insurance deposit to secure your corporate Apple MacBook Pro."
+    },
+    "expected_assessment": "HIGH CONCERN",
+    "expected_payment_flag": true,
+    "description": "Upfront equipment fee demand triggers highest concern and Before You Pay protocol."
+  },
+  {
+    "id": "TC-03",
+    "name": "Mandatory Training Material Fee",
+    "category": "Payment request",
+    "inputs": {
+      "company_name": "Global Data Solutions",
+      "job_title": "Entry Level Analyst",
+      "recruitment_channel": "Email",
+      "website": "https://globaldatasolutions.site",
+      "recruiter_email": "hr@globaldatasolutions.site",
+      "payment_asked": "Yes",
+      "payment_purpose": "Training",
+      "payment_amount": "$200",
+      "raw_message": "Before training commences, please pay a $200 onboarding software training module license fee."
+    },
+    "expected_assessment": "HIGH CONCERN",
+    "expected_payment_flag": true,
+    "description": "Training fees are non-standard in corporate employment."
+  },
+  {
+    "id": "TC-04",
+    "name": "Brand Impersonation with Free Gmail",
+    "category": "Recruiter mismatch",
+    "inputs": {
+      "company_name": "Google LLC",
+      "job_title": "Remote HR Assistant",
+      "recruitment_channel": "Email",
+      "website": "https://google.com",
+      "recruiter_email": "google.recruiting.talent2026@gmail.com",
+      "payment_asked": "No",
+      "raw_message": "Google is hiring remote HR assistants. Forward your resume to google.recruiting.talent2026@gmail.com."
+    },
+    "expected_assessment": "NEEDS VERIFICATION",
+    "expected_payment_flag": false,
+    "description": "Well-known company paired with free email provider demands independent verification."
+  },
+  {
+    "id": "TC-05",
+    "name": "Tech Entity Claimed with Personal Yahoo Recruiter",
+    "category": "Recruiter mismatch",
+    "inputs": {
+      "company_name": "Amazon",
+      "job_title": "Catalog Specialist",
+      "recruitment_channel": "Email",
+      "website": "https://amazon.com",
+      "recruiter_email": "amazon_hiring_manager@yahoo.com",
+      "payment_asked": "No",
+      "raw_message": "Amazon is hiring remote catalog specialists. Please contact my yahoo email with your resume."
+    },
+    "expected_assessment": "NEEDS VERIFICATION",
+    "expected_payment_flag": false,
+    "description": "Mismatch between corporate website and recruiter personal domain."
+  },
+  {
+    "id": "TC-06",
+    "name": "Typosquatting Domain Mimicking Well-Known Brand",
+    "category": "Domain mismatch",
+    "inputs": {
+      "company_name": "Netflix",
+      "job_title": "Streaming QA Tester",
+      "recruitment_channel": "Email",
+      "website": "https://netflix-careers-portal.live",
+      "recruiter_email": "jobs@netflix-careers-portal.live",
+      "payment_asked": "No",
+      "raw_message": "Apply at the newly registered netflix-careers-portal.live."
+    },
+    "expected_assessment": "MULTIPLE WARNING SIGNS",
+    "expected_payment_flag": false,
+    "description": "Typosquatting and high-churn .live TLD mimicking official enterprise."
+  },
+  {
+    "id": "TC-07",
+    "name": "Sparse Company Name Only (Negative Test)",
+    "category": "Missing information",
+    "inputs": {
+      "company_name": "XYZ",
+      "job_title": "WFH job",
+      "recruitment_channel": "Other",
+      "website": "",
+      "recruiter_email": "",
+      "payment_asked": "No",
+      "raw_message": ""
+    },
+    "expected_assessment": "INCONCLUSIVE",
+    "expected_payment_flag": false,
+    "description": "Agent must not hallucinate facts when only bare minimal tokens are provided."
+  },
+  {
+    "id": "TC-08",
+    "name": "Unlisted Local Startup with Clean Domain",
+    "category": "Ambiguous case",
+    "inputs": {
+      "company_name": "GreenLeaf Eco Logistics",
+      "job_title": "Sustainability Coordinator",
+      "recruitment_channel": "Email",
+      "website": "https://greenleaf-eco.com",
+      "recruiter_email": "recruiting@greenleaf-eco.com",
+      "payment_asked": "No",
+      "raw_message": "GreenLeaf Eco is an emerging sustainability firm looking for our first remote coordinator."
+    },
+    "expected_assessment": "LOW CONCERN",
+    "expected_payment_flag": false,
+    "description": "Unlisted organization with aligned custom domain and standard hiring tone."
+  },
+  {
+    "id": "TC-09",
+    "name": "Extreme Urgency Pressure via WhatsApp",
+    "category": "Urgency",
+    "inputs": {
+      "company_name": "Rapid Parcel Express",
+      "job_title": "Dispatcher",
+      "recruitment_channel": "WhatsApp",
+      "website": "https://rapidparcel.site",
+      "recruiter_email": "rapidhr@gmail.com",
+      "payment_asked": "No",
+      "raw_message": "URGENT: Offer expires in 2 hours! No interview required. Sign contract immediately."
+    },
+    "expected_assessment": "MULTIPLE WARNING SIGNS",
+    "expected_payment_flag": false,
+    "description": "Unsolicited WhatsApp, extreme urgency timer, and bypassing standard interview stages."
+  },
+  {
+    "id": "TC-10",
+    "name": "Premature Banking and SSN Credential Demand",
+    "category": "Sensitive information request",
+    "inputs": {
+      "company_name": "Venture Capital Partners",
+      "job_title": "Remote Assistant",
+      "recruitment_channel": "Email",
+      "website": "https://vcpartners.info",
+      "recruiter_email": "onboarding@vcpartners.info",
+      "payment_asked": "No",
+      "raw_message": "Before setting up your phone call, send your full SSN, copy of passport, and online bank account direct deposit credentials."
+    },
+    "expected_assessment": "HIGH CONCERN",
+    "expected_payment_flag": false,
+    "description": "Premature harvesting of government identification and bank routing details."
+  },
+  {
+    "id": "TC-11",
+    "name": "Unlisted Company with No Website Provided",
+    "category": "Unknown company",
+    "inputs": {
+      "company_name": "Horizon Consulting LLC",
+      "job_title": "Operations Manager",
+      "recruitment_channel": "Phone / SMS",
+      "website": "",
+      "recruiter_email": "horizon.ops@hotmail.com",
+      "payment_asked": "No",
+      "raw_message": "Texting you regarding an operations role with Horizon Consulting."
+    },
+    "expected_assessment": "NEEDS VERIFICATION",
+    "expected_payment_flag": false,
+    "description": "Unlisted entity recruiting via SMS with free personal email."
+  },
+  {
+    "id": "TC-12",
+    "name": "Incomplete Evidence with Missing Contact Details",
+    "category": "Incomplete evidence",
+    "inputs": {
+      "company_name": "Vertex Media",
+      "job_title": "Video Editor",
+      "recruitment_channel": "Other",
+      "website": "",
+      "recruiter_email": "",
+      "payment_asked": "No",
+      "raw_message": ""
+    },
+    "expected_assessment": "INCONCLUSIVE",
+    "expected_payment_flag": false,
+    "description": "Missing website and recruiter email prevents conclusive analysis."
+  },
+  {
+    "id": "TC-13",
+    "name": "Established IT Enterprise Campus Hiring",
+    "category": "Legitimate-looking opportunity",
+    "inputs": {
+      "company_name": "Infosys Limited",
+      "job_title": "Systems Engineer",
+      "recruitment_channel": "Job Portal (Indeed/ZipRecruiter)",
+      "website": "https://infosys.com",
+      "recruiter_email": "campus.hiring@infosys.com",
+      "payment_asked": "No",
+      "raw_message": "Application confirmation for Systems Engineer position from official Infosys campus recruiting portal."
+    },
+    "expected_assessment": "LOW CONCERN",
+    "expected_payment_flag": false,
+    "description": "Verified public corporation, recognized domain, standard portal channel."
+  },
+  {
+    "id": "TC-14",
+    "name": "Visa Processing Security Deposit",
+    "category": "Payment request",
+    "inputs": {
+      "company_name": "Global Hospitality Group",
+      "job_title": "Guest Services Manager",
+      "recruitment_channel": "Email",
+      "website": "https://globalhospitality.xyz",
+      "recruiter_email": "visas@globalhospitality.xyz",
+      "payment_asked": "Yes",
+      "payment_purpose": "Security deposit",
+      "payment_amount": "$500",
+      "raw_message": "A refundable $500 security deposit is required for embassy visa paperwork processing."
+    },
+    "expected_assessment": "HIGH CONCERN",
+    "expected_payment_flag": true,
+    "description": "Upfront visa security deposits are a hallmark warning indicator."
+  },
+  {
+    "id": "TC-15",
+    "name": "Recruiter on Subdomain of Official Enterprise",
+    "category": "Ambiguous case",
+    "inputs": {
+      "company_name": "Apple Inc.",
+      "job_title": "Software Quality Engineer",
+      "recruitment_channel": "LinkedIn",
+      "website": "https://apple.com",
+      "recruiter_email": "talent@jobs.apple.com",
+      "payment_asked": "No",
+      "raw_message": "Apple talent acquisition outreach for our Cupertino Software Quality team."
+    },
+    "expected_assessment": "LOW CONCERN",
+    "expected_payment_flag": false,
+    "description": "Subdomain directly correlates with legitimate brand enterprise."
+  },
+  {
+    "id": "TC-16",
+    "name": "Telegram Anonymous Task Scam",
+    "category": "Urgency",
+    "inputs": {
+      "company_name": "Star Media Marketing",
+      "job_title": "Social Media Reviewer",
+      "recruitment_channel": "Telegram",
+      "website": "https://starmedia.top",
+      "recruiter_email": "",
+      "payment_asked": "No",
+      "raw_message": "Complete simple reviews on Telegram, earn $200 daily immediately. No interview or contract needed."
+    },
+    "expected_assessment": "MULTIPLE WARNING SIGNS",
+    "expected_payment_flag": false,
+    "description": "Telegram only, no formal recruiter email, high-churn top domain."
+  },
+  {
+    "id": "TC-17",
+    "name": "Registration Fee for Interview Slot",
+    "category": "Payment request",
+    "inputs": {
+      "company_name": "National Placement Services",
+      "job_title": "Back Office Assistant",
+      "recruitment_channel": "Email",
+      "website": "https://nationalplacement.site",
+      "recruiter_email": "admin@nationalplacement.site",
+      "payment_asked": "Yes",
+      "payment_purpose": "Registration",
+      "payment_amount": "₹1,500",
+      "raw_message": "Candidate must pay a one-time registration charge of ₹1,500 to schedule interview slot with client companies."
+    },
+    "expected_assessment": "HIGH CONCERN",
+    "expected_payment_flag": true,
+    "description": "Charging candidates for interview scheduling is predatory."
+  },
+  {
+    "id": "TC-18",
+    "name": "Legitimate Remote Consulting Contract",
+    "category": "Legitimate-looking opportunity",
+    "inputs": {
+      "company_name": "Accenture",
+      "job_title": "Management Consultant",
+      "recruitment_channel": "LinkedIn",
+      "website": "https://accenture.com",
+      "recruiter_email": "talent.sourcing@accenture.com",
+      "payment_asked": "No",
+      "raw_message": "Invitation to apply for our Management Consulting practice via accenture.com talent portal."
+    },
+    "expected_assessment": "LOW CONCERN",
+    "expected_payment_flag": false,
+    "description": "Verified multinational consulting firm with matching domain."
+  },
+  {
+    "id": "TC-19",
+    "name": "Request for Debit Card CVV and Online Banking PIN",
+    "category": "Sensitive information request",
+    "inputs": {
+      "company_name": "Elite HR Group",
+      "job_title": "Virtual Assistant",
+      "recruitment_channel": "Email",
+      "website": "https://elitehrgroup.xyz",
+      "recruiter_email": "support@elitehrgroup.xyz",
+      "payment_asked": "No",
+      "raw_message": "To verify identity for remote direct deposit, reply with your debit card number, CVV, and ATM PIN."
+    },
+    "expected_assessment": "HIGH CONCERN",
+    "expected_payment_flag": false,
+    "description": "Direct solicitation of payment card security parameters."
+  },
+  {
+    "id": "TC-20",
+    "name": "Minimal Input with Placeholder Company",
+    "category": "Incomplete evidence",
+    "inputs": {
+      "company_name": "ABC",
+      "job_title": "Worker",
+      "recruitment_channel": "Other",
+      "website": "",
+      "recruiter_email": "",
+      "payment_asked": "No",
+      "raw_message": ""
+    },
+    "expected_assessment": "INCONCLUSIVE",
+    "expected_payment_flag": false,
+    "description": "Sparse inputs trigger responsible AI negative test behavior."
+  }
+]

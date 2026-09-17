@@ -1,0 +1,10 @@
+# TrustHire AI robots.txt
+User-agent: *
+Allow: /
+Allow: /how-to-verify-a-work-from-home-job
+Allow: /how-to-verify-a-company
+Allow: /fake-job-offer-warning-signs
+Allow: /recruiter-verification-guide
+Allow: /work-from-home-safety-checklist
+
+Sitemap: https://trusthire.ai/sitemap.xml
