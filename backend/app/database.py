@@ -81,12 +81,36 @@ def init_db():
     """)
     conn.commit()
 
-    # Migration for users table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_token TEXT UNIQUE NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at REAL NOT NULL,
+        expires_at REAL NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);")
+
+    # Migration for users table: ensure password_hash exists
     try:
         cursor.execute("ALTER TABLE users ADD COLUMN password_hash TEXT")
         conn.commit()
     except sqlite3.OperationalError:
         pass
+
+    # Migration for verifications table: ensure user_id column exists
+    try:
+        cursor.execute("ALTER TABLE verifications ADD COLUMN user_id INTEGER")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
+
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_verifications_user_id ON verifications(user_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_verifications_user_email ON verifications(user_email);")
+    conn.commit()
 
     conn.close()
 

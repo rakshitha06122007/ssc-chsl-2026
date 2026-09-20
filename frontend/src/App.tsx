@@ -15,51 +15,163 @@ import { EvaluationPage } from './pages/EvaluationPage';
 import { SafetyGuidesPage } from './pages/SafetyGuidesPage';
 import { LoginPage } from './pages/LoginPage';
 import { User, VerificationReport } from './types';
+import { getAuthSession, logout } from './services/api';
+
+const PRIVATE_TABS = ['dashboard', 'verify-job', 'history'];
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<string>(() => {
     if (['#login', '#create-account', '#register', '#verify-email'].includes(window.location.hash)) return 'login';
     return localStorage.getItem('trusthire_user') ? 'dashboard' : 'landing';
   });
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('trusthire_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<VerificationReport | null>(null);
   const [showReportModal, setShowReportModal] = useState<boolean>(false);
   const [jobInitialPayload, setJobInitialPayload] = useState<Record<string, any> | undefined>(undefined);
 
-  // Load user session from localStorage & hash listener
-  useEffect(() => {
-    const saved = localStorage.getItem('trusthire_user');
-    if (saved) {
-      try {
-        setUser(JSON.parse(saved));
-      } catch (e) {
-        console.error(e);
-      }
-    }
+  // PWA installation prompt event state
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState<boolean>(false);
 
+  // 1. Check HTTP-only cookie session on load
+  useEffect(() => {
+    let isMounted = true;
+    getAuthSession().then((res) => {
+      if (!isMounted) return;
+      if (res.authenticated && res.user) {
+        setUser(res.user);
+        localStorage.setItem('trusthire_user', JSON.stringify(res.user));
+      } else {
+        setUser(null);
+        localStorage.removeItem('trusthire_user');
+      }
+    }).catch(() => {
+      // Offline or network error; retain cached user state if offline
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // 2. Hash listener & navigation syncing
+  useEffect(() => {
     const onHashChange = () => {
-      if (['#login', '#create-account', '#register', '#verify-email'].includes(window.location.hash)) {
-        setCurrentTab('login');
-      } else if (window.location.hash === '#landing') {
+      const hash = window.location.hash;
+      if (['#login', '#create-account', '#register', '#verify-email'].includes(hash)) {
+        if (user) {
+          setCurrentTab('dashboard');
+          window.location.hash = '#dashboard';
+        } else {
+          setCurrentTab('login');
+        }
+      } else if (hash === '#landing') {
         setCurrentTab('landing');
-      } else if (window.location.hash === '#dashboard') {
-        setCurrentTab('dashboard');
+      } else if (hash === '#dashboard') {
+        if (!user) {
+          setCurrentTab('login');
+          window.location.hash = '#login';
+        } else {
+          setCurrentTab('dashboard');
+        }
+      } else if (hash === '#verify-job') {
+        if (!user) {
+          setCurrentTab('login');
+          window.location.hash = '#login';
+        } else {
+          setCurrentTab('verify-job');
+        }
+      } else if (hash === '#history') {
+        if (!user) {
+          setCurrentTab('login');
+          window.location.hash = '#login';
+        } else {
+          setCurrentTab('history');
+        }
       }
     };
+
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
+  }, [user]);
+
+  // 3. Enforce tab route guards on currentTab or user state change
+  useEffect(() => {
+    if (PRIVATE_TABS.includes(currentTab) && !user) {
+      setCurrentTab('login');
+      window.location.hash = '#login';
+    } else if (currentTab === 'login' && user) {
+      setCurrentTab('dashboard');
+      window.location.hash = '#dashboard';
+    }
+  }, [currentTab, user]);
+
+  // 4. Capture PWA beforeinstallprompt event
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null);
+      setIsInstallable(false);
+      console.log('TrustHire PWA was successfully installed.');
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    try {
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+      if (choiceResult.outcome === 'accepted') {
+        setIsInstallable(false);
+        setDeferredPrompt(null);
+      }
+    } catch (e) {
+      console.error('PWA install prompt error:', e);
+    }
+  };
 
   const handleLoginSuccess = (authenticatedUser: User) => {
     setUser(authenticatedUser);
     localStorage.setItem('trusthire_user', JSON.stringify(authenticatedUser));
     setAuthModalOpen(false);
+    setCurrentTab('dashboard');
+    window.location.hash = '#dashboard';
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
     setUser(null);
     localStorage.removeItem('trusthire_user');
+    setCurrentTab('landing');
+    window.location.hash = '#landing';
   };
 
   const handleViewReport = (report: VerificationReport) => {
@@ -68,10 +180,36 @@ export function App() {
   };
 
   const handleNavigateWithPayload = (tab: string, payload?: any) => {
+    if (PRIVATE_TABS.includes(tab) && !user) {
+      setCurrentTab('login');
+      window.location.hash = '#login';
+      return;
+    }
     if (payload && tab === 'verify-job') {
       setJobInitialPayload(payload);
     }
     setCurrentTab(tab);
+    window.location.hash = `#${tab}`;
+  };
+
+  const handleTabSelect = (tab: string) => {
+    if (tab === 'analyzers') {
+      setCurrentTab('company-verify');
+      window.location.hash = '#company-verify';
+      return;
+    }
+    if (PRIVATE_TABS.includes(tab) && !user) {
+      setCurrentTab('login');
+      window.location.hash = '#login';
+      return;
+    }
+    if (tab === 'login' && user) {
+      setCurrentTab('dashboard');
+      window.location.hash = '#dashboard';
+      return;
+    }
+    setCurrentTab(tab);
+    window.location.hash = `#${tab}`;
   };
 
   return (
@@ -79,16 +217,12 @@ export function App() {
       {/* Navbar */}
       <Navbar
         currentTab={currentTab}
-        setCurrentTab={(tab) => {
-          if (tab === 'analyzers') {
-            setCurrentTab('company-verify');
-          } else {
-            setCurrentTab(tab);
-          }
-        }}
+        setCurrentTab={handleTabSelect}
         user={user}
         onOpenAuth={() => setCurrentTab('login')}
         onLogout={handleLogout}
+        isInstallable={isInstallable}
+        onInstall={handleInstallClick}
       />
 
       {/* Sub-navigation bar for Standalone Analyzers */}
@@ -97,7 +231,7 @@ export function App() {
           <div className="max-w-5xl mx-auto flex items-center gap-2 overflow-x-auto text-xs">
             <span className="text-slate-500 font-mono uppercase text-[10px] mr-2">Analyzers:</span>
             <button
-              onClick={() => setCurrentTab('company-verify')}
+              onClick={() => handleTabSelect('company-verify')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
                 currentTab === 'company-verify' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold' : 'text-slate-400 hover:text-white'
               }`}
@@ -105,7 +239,7 @@ export function App() {
               Verify Company
             </button>
             <button
-              onClick={() => setCurrentTab('recruiter-email')}
+              onClick={() => handleTabSelect('recruiter-email')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
                 currentTab === 'recruiter-email' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold' : 'text-slate-400 hover:text-white'
               }`}
@@ -113,7 +247,7 @@ export function App() {
               Recruiter Email
             </button>
             <button
-              onClick={() => setCurrentTab('website-analyze')}
+              onClick={() => handleTabSelect('website-analyze')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
                 currentTab === 'website-analyze' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold' : 'text-slate-400 hover:text-white'
               }`}
@@ -121,7 +255,7 @@ export function App() {
               Website & Domain
             </button>
             <button
-              onClick={() => setCurrentTab('message-analyze')}
+              onClick={() => handleTabSelect('message-analyze')}
               className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
                 currentTab === 'message-analyze' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold' : 'text-slate-400 hover:text-white'
               }`}
@@ -144,19 +278,16 @@ export function App() {
 
         {currentTab === 'landing' && (
           <LandingPage
-            onStartVerification={() => setCurrentTab('verify-job')}
-            onExploreDemo={() => setCurrentTab('demo')}
-            onSelectTab={setCurrentTab}
+            onStartVerification={() => handleTabSelect('verify-job')}
+            onExploreDemo={() => handleTabSelect('demo')}
+            onSelectTab={handleTabSelect}
           />
         )}
 
         {currentTab === 'login' && (
           <LoginPage
-            onLoginSuccess={(u) => {
-              handleLoginSuccess(u);
-              setCurrentTab('dashboard');
-            }}
-            onNavigateLanding={() => setCurrentTab('landing')}
+            onLoginSuccess={handleLoginSuccess}
+            onNavigateLanding={() => handleTabSelect('landing')}
           />
         )}
 

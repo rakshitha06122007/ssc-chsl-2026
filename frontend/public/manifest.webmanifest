@@ -1,0 +1,30 @@
+﻿{
+  "name": "TrustHire AI — Opportunity Verification System",
+  "short_name": "TrustHire",
+  "description": "Verify before you trust. Verify before you pay. Autonomous AI verification assistant to investigate job offers, recruiters, and companies.",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#090d16",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

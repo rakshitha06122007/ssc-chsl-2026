@@ -10,7 +10,8 @@ import {
   BookOpen, 
   User as UserIcon, 
   LogOut,
-  Mail
+  Mail,
+  ArrowDownToLine
 } from 'lucide-react';
 import { User } from '../types';
 
@@ -20,6 +21,8 @@ interface NavbarProps {
   user: User | null;
   onOpenAuth: () => void;
   onLogout: () => void;
+  isInstallable?: boolean;
+  onInstall?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -27,11 +30,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   setCurrentTab,
   user,
   onOpenAuth,
-  onLogout
+  onLogout,
+  isInstallable = false,
+  onInstall
 }) => {
   const navItems = [
     { id: 'landing', label: 'Overview', icon: BookOpen },
-    ...(!user ? [{ id: 'login', label: 'Login / OTP', icon: Mail, badge: 'Direct' }] : []),
+    ...(!user ? [{ id: 'login', label: 'Email & OTP Access', icon: Mail, badge: 'Direct' }] : []),
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'verify-job', label: 'Verify Job', icon: Search, badge: 'Agentic' },
     { id: 'analyzers', label: 'Analyzers', icon: FileText },
@@ -90,8 +95,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* User Auth Section */}
+          {/* Action & User Auth Section */}
           <div className="flex items-center gap-2">
+            {isInstallable && onInstall && (
+              <button
+                onClick={onInstall}
+                title="Install TrustHire Web App"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all shadow-sm shadow-emerald-500/10 hover:scale-[1.02] cursor-pointer"
+              >
+                <ArrowDownToLine className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Install App</span>
+              </button>
+            )}
+
             {user ? (
               <div className="flex items-center gap-2">
                 <div className="hidden lg:flex flex-col items-end">
@@ -115,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-cyan-500/20 transition-all hover:scale-[1.02]"
               >
                 <Mail className="w-3.5 h-3.5" />
-                <span>Verify Email / Login</span>
+                <span>Email &amp; OTP Access</span>
               </button>
             )}
           </div>

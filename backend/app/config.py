@@ -28,7 +28,15 @@ DEMO_AUTH_MODE = os.environ.get("DEMO_AUTH_MODE", "false").lower() in ("true", "
 
 PORT = int(os.environ.get("PORT", 5000))
 SECRET_KEY = os.environ.get("SECRET_KEY", "trusthire-secret-key-dev-2026")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000")
 VITE_SITE_URL = os.environ.get("VITE_SITE_URL", "https://trusthire.ai")
+
+# Session Cookie Security Configuration
+SESSION_COOKIE_NAME = "trusthire_session"
+SESSION_LIFETIME_DAYS = int(os.environ.get("SESSION_LIFETIME_DAYS", 7))
+SESSION_COOKIE_SECURE = os.environ.get("SECURE_COOKIES", "false").lower() in ("true", "1", "yes")
+SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax")
+SESSION_COOKIE_HTTPONLY = True
 
 def get_smtp_config():
     load_dotenv()

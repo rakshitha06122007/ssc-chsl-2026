@@ -1,34 +1,78 @@
-# TrustHire AI
+# TrustHire AI — Opportunity Verification System (PWA)
 
 > **"Verify Before You Trust. Verify Before You Pay."**  
-> *Domain: Enterprise Productivity / Agentic AI*
+> *Domain: Enterprise Productivity / Agentic AI / Progressive Web App (PWA)*
 
 ---
 
 ## 1. Problem Statement
 The modern remote employment ecosystem is experiencing an unprecedented surge in sophisticated hiring fraud:
-- **Upfront Fee & Equipment Scams:** Fraudulent recruiters offer high-paying work-from-home positions (e.g., $40–$55/hr) and pressure candidates to wire $150–$500 in "refundable insurance deposits" for home-office Apple MacBooks or specialized onboarding software.
+- **Upfront Fee & Equipment Scams:** Fraudulent recruiters offer high-paying work-from-home positions (e.g., $40–$55/hr) and pressure candidates to wire $150–$500 in "refundable insurance deposits" for home-office MacBooks or specialized software.
 - **Brand Impersonation & Free Mailboxes:** Scammers pose as talent acquisition leaders from recognized enterprises (Google, Microsoft, Amazon) while secretly communicating via personal free mailboxes (`@gmail.com`, `@yahoo.com`) or subtle typosquatted domains (`g00gle-careers.live`).
 - **Binary Chatbot Failure:** Existing AI tools frequently act as simplistic chat wrappers that hallucinate facts or falsely label legitimate unlisted startups as scams, providing zero transparent forensic proof.
 
 ---
 
 ## 2. Solution: TrustHire AI
-TrustHire AI is an enterprise-grade, multi-agent opportunity verification engine. Rather than making unsubstantiated binary claims (*"100% Genuine"* or *"100% Scam"*), TrustHire AI operates on the core philosophy:
+TrustHire AI is an enterprise-grade, multi-agent opportunity verification engine and installable Progressive Web App (PWA). Rather than making unsubstantiated binary claims (*"100% Genuine"* or *"100% Scam"*), TrustHire AI operates on the core philosophy:
 
 > **"Verify the opportunity, rather than detect fake companies."**
 
-The platform executes a multi-step agentic investigation pipeline, catalogs findings into a structured **Evidence Locker**, assigns balanced multi-dimensional risk assessments, and enforces the **Before You Pay** safety protocol.
+The platform executes a multi-step agentic investigation pipeline, catalogs findings into a structured **Evidence Locker**, assigns balanced multi-dimensional risk assessments, enforces the **Before You Pay** safety protocol, and provides isolated per-user verification history under secure authentication.
 
 ---
 
-## 3. Why It Is Agentic
-TrustHire AI is **not** a single prompt or static form. It is a true agentic system that embodies the complete lifecycle:
+## 3. Security & Authentication Architecture
+
+TrustHire AI is secured with real database authentication, zero plaintext passwords, and isolated session controls:
+
+1. **Database Authentication:**
+   - Real user credentials managed in SQLite (`users` and `sessions` tables).
+   - Zero hardcoded or default client credentials.
+2. **Password Security:**
+   - Passwords hashed with high-entropy cryptographic algorithms (`scrypt` / `PBKDF2:SHA-256` via Werkzeug).
+   - Plaintext passwords and hashes are never exposed in APIs or server logs.
+3. **6-Digit Email OTP Verification:**
+   - New accounts are registered with `is_verified = 0`.
+   - A cryptographically random 6-digit verification code is generated, salted, and hashed in `otp_codes`.
+   - The code is dispatched to the user's real email inbox via TLS SMTP.
+   - Enforces 10-minute code expiry, 60-second resend cooldown, single-use invalidation, and maximum attempt caps.
+   - Accounts activate (`is_verified = 1`) only upon valid OTP submission.
+4. **HTTP-Only Session Management:**
+   - Authenticated sessions use cryptographically random 64-character tokens stored in the `sessions` table.
+   - Transmitted to browsers via secure HTTP-Only, `SameSite=Lax`, path-scoped cookies (`trusthire_session`).
+   - JavaScript cannot access session tokens (protecting against XSS credential theft).
+5. **Report Ownership & Data Isolation:**
+   - Every verification report is permanently linked to the creator's `user_id` and `user_email`.
+   - History retrieval (`GET /api/history`) and report deletion (`DELETE /api/history/:id`) enforce strict user boundaries. Users can only access and delete their own reports.
+6. **API Protection:**
+   - All private endpoints (`/api/history`, `/api/verify/job-full`, `/api/auth/me`, `/api/user/*`) are protected by a `@login_required` decorator that returns `401 Unauthorized` for missing or invalid sessions.
+7. **Rate Limiting:**
+   - Automatic rate limiting prevents credential stuffing and OTP spamming (e.g., max 5 failed attempts per 15 minutes).
+
+---
+
+## 4. Progressive Web App (PWA) Capabilities
+
+TrustHire AI is an installable PWA designed for desktop and mobile:
+- **Web App Manifest (`manifest.webmanifest`):** Configured with standalone display mode, brand colors (`#090d16`), shortcuts, and responsive 192x192 & 512x512 high-resolution icons.
+- **Service Worker (`sw.js`):**
+  - Static Asset Caching (Cache-First strategy for CSS, JS, fonts, and images).
+  - API Network Bypass (Network-Only strategy for all `/api/*` endpoints to ensure real-time security data).
+- **In-App Installation:**
+  - Automatically captures the browser's `beforeinstallprompt` event.
+  - Displays an **"Install App"** button in the navigation header when available in supported browsers (Chrome, Edge, Android).
+  - Can be launched standalone like a native desktop or mobile application.
+
+---
+
+## 5. The Multi-Agent Verification Lifecycle
+
 ```
 ASK → COLLECT → INVESTIGATE → ANALYZE → DECIDE → EXPLAIN → LOG
 ```
 
-### The Multi-Agent Ecosystem:
+### Forensic Agent Roles:
 1. **`question_agent`**: Dynamically evaluates collected parameters and asks one intelligent question at a time, branching when payment demands or non-standard channels are detected.
 2. **`company_agent`**: Cross-correlates claimed corporate entities against verified registries and detects discrepancies with user-provided websites.
 3. **`recruiter_agent`**: Distinguishes corporate domains from personal mailboxes, scans for typosquatting, and evaluates mailbox reputation.
@@ -41,16 +85,18 @@ ASK → COLLECT → INVESTIGATE → ANALYZE → DECIDE → EXPLAIN → LOG
 
 ---
 
-## 4. Architecture Diagram
+## 6. Architecture Diagram
 
 ```mermaid
 graph TD
-    User([User / Job Applicant]) --> Auth[Authentication Flow<br>Email OTP / Demo Auth Mode]
-    Auth --> Dashboard[Enterprise Dashboard]
-    Dashboard --> QuestionAgent[1. Question Agent<br>Dynamic 1-by-1 Inquiry]
+    User([User / Job Applicant]) --> PWA[TrustHire PWA App<br>Service Worker & Static Cache]
+    PWA --> AuthGuard{Authenticated Session?}
+    AuthGuard -- No --> LoginPage[Sign In / Register<br>6-Digit Email OTP]
+    AuthGuard -- Yes --> Dashboard[User Dashboard<br>Isolated History & Reports]
 
-    QuestionAgent --> CompletenessCheck{Completeness Check}
-    CompletenessCheck -- Need More Info --> QuestionAgent
+    Dashboard --> QuestionAgent[1. Question Agent<br>Dynamic 1-by-1 Inquiry]
+    QuestionAgent --> CompletenessCheck{Complete Input?}
+    CompletenessCheck -- Need Info --> QuestionAgent
     CompletenessCheck -- Ready --> Orchestrator[Verification Orchestrator]
 
     subgraph Forensic_Agents [Parallel Forensic Analysis Agents]
@@ -63,31 +109,30 @@ graph TD
     Forensic_Agents --> EvidenceAgent[2. Evidence Agent<br>Synthesizes Evidence Locker]
     EvidenceAgent --> RiskAgent[3. Risk Agent<br>Responsible Uncertainty Logic]
 
-    RiskAgent --> BeforeYouPayCheck{Upfront Payment<br>Detected?}
+    RiskAgent --> BeforeYouPayCheck{Upfront Fee<br>Detected?}
     BeforeYouPayCheck -- Yes --> BeforeYouPay[Before You Pay Protocol<br>Critical Warning Shield]
     BeforeYouPayCheck -- No --> ReportAgent[4. Report Agent]
     BeforeYouPay --> ReportAgent
 
     ReportAgent --> OpportunityReport[Opportunity Verification Report]
-    OpportunityReport --> SQLite[(SQLite Database<br>Audit Trace & History)]
+    OpportunityReport --> SQLite[(SQLite Database<br>Scored History linked to user_id)]
 ```
 
 ---
 
-## 5. Key Features
+## 7. Key Features
 
 ### 🔍 Conversational "Verify Job Offer"
-- Asks one question at a time with interactive option chips.
+- Step-by-step inquiry asking one question at a time with option chips.
 - Dynamically branches if upfront payment or high-risk communication channels (WhatsApp, Telegram) are selected.
-- Live progress completeness bar.
 
 ### 🗄️ Evidence Locker
 - Every finding is cataloged with:
   - **Finding**: Clear descriptive summary
-  - **Source**: Attributed data source
+  - **Source**: Attributed forensic source
   - **Category**: `User Provided`, `Verified Evidence`, `AI Analysis`, `Unknown`
   - **Status**: `Low Concern`, `Needs Verification`, `Warning Indicator`, `High Concern`
-  - **Explanation**: Rationale explaining why the artifact matters.
+  - **Explanation**: Transparent rationale explaining why the artifact matters.
 
 ### 🛡️ "Before You Pay" Protocol
 - Prominently triggered whenever an upfront payment (equipment fee, training module, security deposit) is detected.
@@ -95,46 +140,63 @@ graph TD
 - Interactive candidate safety checklist.
 - Strict security guarantee: zero financial credentials ever solicited or stored.
 
-### 🤖 Responsible AI & Uncertainty Handling (Negative Testing)
-- If a user inputs minimal parameters (e.g., *"Company: XYZ, Job: WFH job"*), the agent **refuses to hallucinate**.
-- Accurately outputs `INCONCLUSIVE` and requests the company's official website, recruiter contact, or original offer text.
-
-### ⚡ 60-Second Hackathon Demo Flow
-- Rapid 1-click execution for judges and presentation evaluators demonstrating the full agent workflow from suspicious WFH offer to Evidence Locker and Audit Trace.
-
-### 🧪 Live 20-Case Evaluation Suite
-- Real-time evaluation runner executing against 20 standardized test cases spanning 10 threat categories.
-- Zero fabricated results: runs directly against live backend agent logic with 100% accuracy.
+### 🧪 Live 20-Case Evaluation Benchmark
+- Standardized test runner executing against 20 real-world threat scenarios.
+- Verifies 100% accuracy across payment scams, domain impersonation, and ambiguous inputs.
 
 ---
 
-## 6. Tech Stack
+## 8. Tech Stack
 
-- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React, Framer Motion.
-- **Backend:** Python 3.15, Flask REST API, Flask-CORS, Requests.
-- **Database:** SQLite (persisting users, OTP tokens, reports, and audit logs).
-- **AI Engine:** Provider abstraction supporting Gemini, OpenAI, or the Built-in Deterministic Forensic Engine (zero-dependency offline capability).
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React, Framer Motion, PWA Service Worker.
+- **Backend:** Python 3.15, Flask REST API, Flask-CORS, Requests, Werkzeug.
+- **Database:** SQLite (persisting users, password hashes, OTP codes, user sessions, verification reports, and audit traces).
+- **Email Delivery:** Python `smtplib` with TLS encryption (Gmail, SendGrid, Outlook, SES).
 
 ---
 
-## 7. Installation & Setup
+## 9. Installation & Setup
 
 ### Prerequisites
 - Python 3.10+
 - Node.js 18+ and npm
 
-### 1. Clone / Navigate to Directory
+### 1. Clone & Navigate
 ```bash
-cd C:\Users\raksh\.gemini\antigravity-ide\scratch\trusthire-ai
+git clone https://github.com/your-username/trusthire.git
+cd trusthire
 ```
 
-### 2. Backend Setup
+### 2. Backend Environment & Setup
 ```bash
 cd backend
-python -m pip install flask flask-cors requests
+python -m pip install flask flask-cors requests werkzeug
+
+# Copy sample environment and configure credentials
+cp .env.example .env
+```
+
+Configure your `.env` file:
+```env
+PORT=5000
+SECRET_KEY=generate-a-strong-random-key
+FRONTEND_URL=http://localhost:3000
+SESSION_COOKIE_SECURE=false
+
+# SMTP Email Delivery (e.g. Gmail)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-16-char-google-app-password
+SMTP_FROM=TrustHire AI <no-reply@trusthire.ai>
+SMTP_USE_TLS=true
+```
+
+Start the backend server:
+```bash
 python app/main.py
 ```
-*Backend server will start on `http://127.0.0.1:5000`.*
+*Backend runs on `http://127.0.0.1:5000`.*
 
 ### 3. Frontend Setup
 ```bash
@@ -142,48 +204,32 @@ cd ../frontend
 npm install
 npm run dev -- --port 3000
 ```
-*Frontend will launch on `http://localhost:3000`.*
+*Frontend runs on `http://localhost:3000`.*
 
 ---
 
-## 8. Environment Variables
+## 10. Running Automated Tests
 
-Create a `.env` file or export the following variables:
-
-```env
-# AI Configuration (Pluggable Provider Abstraction)
-AI_PROVIDER=heuristic    # Options: "heuristic" (default offline), "gemini", "openai"
-AI_API_KEY=              # Optional: API key for selected provider
-
-# Server & Auth Settings
-PORT=5000
-DEMO_AUTH_MODE=true      # Enables 1-click demo login & OTP code hints for testing
-DATABASE_PATH=trusthire.db
-SECRET_KEY=trusthire-secret-key-2026
-
-# SEO & Production URL
-VITE_SITE_URL=https://trusthire.ai
+### 1. Backend Security & PWA Auth Suite
+```bash
+cd backend
+python -m unittest tests/test_secure_pwa_auth.py
 ```
+*Validates removed public SMTP endpoints, PBKDF2/scrypt password hashing, OTP verification, cookie sessions, route protection, and user report isolation.*
 
----
+### 2. 20-Case AI Evaluation Suite
+```bash
+cd backend
+python -m evaluation.eval_runner
+```
+*Runs the 20-scenario forensic evaluation benchmark (100% pass rate).*
 
-## 9. SEO & Google Visibility
-As detailed in [`docs/SEO_AND_DEPLOYMENT.md`](docs/SEO_AND_DEPLOYMENT.md), search engine visibility requires:
-1. Public deployment to a production edge domain (`https://trusthire.ai`).
-2. Google Search Console domain ownership verification.
-3. XML Sitemap submission (`https://trusthire.ai/sitemap.xml`).
-4. 5 public informational guide pages with structured semantic HTML:
-   - `/how-to-verify-a-work-from-home-job`
-   - `/how-to-verify-a-company`
-   - `/fake-job-offer-warning-signs`
-   - `/recruiter-verification-guide`
-   - `/work-from-home-safety-checklist`
-
----
-
-## 10. Built vs Third-Party Components
-- **Built In-House:** Multi-agent orchestrator, question agent, entity lookup tools, domain analyzers, Evidence Locker, Before You Pay protocol, evaluation test suite, SQLite persistence, and UI design system.
-- **Third-Party Libraries:** React, Vite, Tailwind CSS, Lucide Icons, Flask, Requests.
+### 3. Frontend Type & Build Check
+```bash
+cd frontend
+npx tsc --noEmit
+npm run build
+```
 
 ---
 

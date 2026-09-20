@@ -94,11 +94,11 @@ Verify Before You Trust. Verify Before You Pay.
         msg.attach(MIMEText(plain_text, "plain"))
         msg.attach(MIMEText(html_text, "html"))
 
-        # Connect to SMTP Server
+        # Connect to SMTP Server with 4s timeout
         if port == 465:
-            server = smtplib.SMTP_SSL(host, port, timeout=15)
+            server = smtplib.SMTP_SSL(host, port, timeout=4)
         else:
-            server = smtplib.SMTP(host, port, timeout=15)
+            server = smtplib.SMTP(host, port, timeout=4)
             if use_tls:
                 server.starttls()
 
