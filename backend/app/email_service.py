@@ -94,11 +94,11 @@ Verify Before You Trust. Verify Before You Pay.
         msg.attach(MIMEText(plain_text, "plain"))
         msg.attach(MIMEText(html_text, "html"))
 
-        # Connect to SMTP Server with 4s timeout
+        # Connect to SMTP Server with 10s timeout
         if port == 465:
-            server = smtplib.SMTP_SSL(host, port, timeout=4)
+            server = smtplib.SMTP_SSL(host, port, timeout=10)
         else:
-            server = smtplib.SMTP(host, port, timeout=4)
+            server = smtplib.SMTP(host, port, timeout=10)
             if use_tls:
                 server.starttls()
 
@@ -106,22 +106,22 @@ Verify Before You Trust. Verify Before You Pay.
         server.send_message(msg)
         server.quit()
 
-        print(f"[Email Service] SUCCESS: Verification email dispatched successfully to {to_email}!")
+        print(f"[Email Service] SUCCESS: Verification email dispatched successfully to {to_email} via {host}:{port}!", flush=True)
         return {
             "sent": True,
             "error": None,
-            "message": f"Verification code sent to {to_email}."
+            "message": "A verification code has been sent to your email."
         }
     except smtplib.SMTPAuthenticationError as e:
-        print(f"[Email Service ERROR] Google SMTP Authentication Failed (535 Bad Credentials). Regular password was rejected. User: {user}")
+        print(f"[Email Service ERROR] Google/SMTP Authentication Failed (535 Bad Credentials). Please ensure SMTP_PASSWORD is set to a 16-character Google App Password from https://myaccount.google.com/apppasswords. User: {user}", flush=True)
         return {
             "sent": False,
-            "error": "Google rejected the login (Bad Credentials). Google does NOT accept regular passwords for SMTP. You must use a 16-character Google 'App Password'. Create one at https://myaccount.google.com/apppasswords and paste it as SMTP_PASSWORD."
+            "error": "Unable to send verification email. Please check your SMTP credentials or try again."
         }
     except Exception as e:
         error_msg = str(e)
-        print(f"[Email Service ERROR] SMTP delivery failed to {to_email}: {error_msg}")
+        print(f"[Email Service ERROR] SMTP delivery failed to {to_email}: {error_msg}", flush=True)
         return {
             "sent": False,
-            "error": f"Email delivery failed: {error_msg}"
+            "error": "Unable to send verification email. Please try again."
         }

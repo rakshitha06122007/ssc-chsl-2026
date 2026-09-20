@@ -95,13 +95,10 @@ def register_user():
     data = request.get_json() or {}
     email = data.get("email", "")
     password = data.get("password", "")
-    success, msg, code = register_account(email, password)
+    success, msg = register_account(email, password)
     if not success:
         return jsonify({"success": False, "message": msg}), 400
-    resp_data = {"success": True, "message": msg}
-    if code:
-        resp_data["code"] = code
-    return jsonify(resp_data)
+    return jsonify({"success": True, "message": msg})
 
 @app.route("/api/auth/login", methods=["POST"])
 def login_user():
@@ -152,13 +149,10 @@ def verify_user_otp():
 def send_otp():
     data = request.get_json() or {}
     email = data.get("email", "")
-    success, msg, code = generate_and_send_otp(email)
+    success, msg = generate_and_send_otp(email)
     if not success:
         return jsonify({"success": False, "message": msg}), 400
-    resp_data = {"success": True, "message": msg}
-    if code:
-        resp_data["code"] = code
-    return jsonify(resp_data)
+    return jsonify({"success": True, "message": msg})
 
 @app.route("/api/auth/logout", methods=["POST"])
 def logout_user():

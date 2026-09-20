@@ -11,7 +11,7 @@ from tools.domain_analysis import classify_email_domain
 from app.email_service import send_verification_email
 
 OTP_EXPIRY_SECONDS = 600  # 10 minutes
-RESEND_COOLDOWN_SECONDS = 30  # 30 seconds cooldown
+RESEND_COOLDOWN_SECONDS = 60  # 60 seconds cooldown
 MAX_ATTEMPTS = 5
 
 def hash_otp(code: str, salt: str) -> str:
@@ -20,7 +20,7 @@ def hash_otp(code: str, salt: str) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 def check_rate_limit(identifier: str, max_requests: int = 30, window_seconds: int = 3600) -> bool:
-    """Returns True if within limit, False if rate limited. Set to 30 for seamless development testing."""
+    """Returns True if within limit, False if rate limited."""
     now = time.time()
     conn = get_db()
     cursor = conn.cursor()
@@ -67,33 +67,31 @@ def reset_rate_limits(email: Optional[str] = None):
     conn.commit()
     conn.close()
 
-def generate_and_send_otp(email: str) -> Tuple[bool, str, Optional[str]]:
+def generate_and_send_otp(email: str) -> Tuple[bool, str]:
     """
     Generates a cryptographically random 6-digit OTP, stores only its hash,
-    and delivers it strictly to the user's real email inbox.
-    In DEMO_AUTH_MODE or on SMTP failure in development, provides the code
-    so any email address can be used without external blocking.
+    and delivers it strictly to the user's real email inbox via SMTP.
+    Never exposes or returns the plain OTP code.
     """
     email = email.strip().lower()
     if not email or "@" not in email:
-        return False, "Please enter a valid email address.", None
+        return False, "Please enter a valid email address."
 
-    # Rate limiting: max 10 requests per hour per email for easy multi-email testing
-    if not check_rate_limit(f"otp:{email}", max_requests=10, window_seconds=3600):
-        return False, "Too many verification requests. Please wait before requesting another code.", None
+    # Rate limiting: max 5 requests per hour per email
+    if not check_rate_limit(f"otp:{email}", max_requests=5, window_seconds=3600):
+        return False, "Too many verification requests. Please wait before requesting another code."
 
     now = time.time()
     conn = get_db()
     cursor = conn.cursor()
 
-    cooldown_limit = 5 if DEMO_AUTH_MODE else RESEND_COOLDOWN_SECONDS
     # Check cooldown on existing recent codes
     cursor.execute("SELECT created_at FROM otp_codes WHERE email = ? ORDER BY created_at DESC LIMIT 1", (email,))
     last_row = cursor.fetchone()
-    if last_row and (now - last_row["created_at"] < cooldown_limit):
-        remaining = int(cooldown_limit - (now - last_row["created_at"]))
+    if last_row and (now - last_row["created_at"] < RESEND_COOLDOWN_SECONDS):
+        remaining = int(RESEND_COOLDOWN_SECONDS - (now - last_row["created_at"]))
         conn.close()
-        return False, f"Please wait {remaining} seconds before requesting a new code.", None
+        return False, f"Please wait {remaining} seconds before requesting a new code."
 
     # Generate secure 6-digit OTP
     otp_code = f"{secrets.randbelow(900000) + 100000}"
@@ -110,22 +108,20 @@ def generate_and_send_otp(email: str) -> Tuple[bool, str, Optional[str]]:
     conn.commit()
     conn.close()
 
-    # Dispatch email in a background thread so the HTTP API response is instantaneous
-    import threading
-    def _dispatch():
-        try:
-            send_verification_email(email, otp_code)
-        except Exception as ex:
-            print(f"[Email Dispatch Error] {ex}", flush=True)
+    # Send real email via SMTP
+    email_res = send_verification_email(email, otp_code)
+    if not email_res.get("sent"):
+        # Rollback/delete the generated OTP so failed attempts don't linger
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("DELETE FROM otp_codes WHERE id = ?", (row_id,))
+        conn.commit()
+        conn.close()
+        # Refund rate limit attempt on delivery failure
+        refund_rate_limit(f"otp:{email}")
+        return False, email_res.get("error", "Unable to send verification email. Please try again.")
 
-    threading.Thread(target=_dispatch, daemon=True).start()
-
-    # In DEMO / DEV mode, return the code directly so ANY arbitrary email address works instantly
-    if DEMO_AUTH_MODE:
-        print(f"[AUTH SYSTEM] Verification code generated for {email}: {otp_code}", flush=True)
-        return True, f"Code generated for {email}. Enter {otp_code} to proceed.", otp_code
-
-    return True, f"A 6-digit verification code has been sent to {email}.", None
+    return True, "A verification code has been sent to your email."
 
 def verify_otp_code(email: str, code: str, password: Optional[str] = None) -> Tuple[bool, str, Dict[str, Any], Optional[str]]:
     """

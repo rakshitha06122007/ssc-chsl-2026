@@ -30,7 +30,7 @@ export async function logout(): Promise<{ success: boolean; message: string }> {
   return res.json();
 }
 
-export async function sendOtp(email: string): Promise<{ success: boolean; message: string; code?: string }> {
+export async function sendOtp(email: string): Promise<{ success: boolean; message: string }> {
   const res = await fetch(`${API_BASE}/auth/send-otp`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -40,7 +40,7 @@ export async function sendOtp(email: string): Promise<{ success: boolean; messag
   return res.json();
 }
 
-export async function register(email: string, password: string): Promise<{ success: boolean; message: string; code?: string }> {
+export async function register(email: string, password: string): Promise<{ success: boolean; message: string }> {
   const res = await fetch(`${API_BASE}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

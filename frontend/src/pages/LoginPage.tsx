@@ -43,7 +43,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
-  const [suggestedCode, setSuggestedCode] = useState<string | null>(null);
 
   // Sync with browser hash changes
   useEffect(() => {
@@ -97,17 +96,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       if (res.success) {
         setMode('verify-otp');
         window.location.hash = '#verify-email';
-        setCooldown(30);
-        if (res.code) {
-          setSuggestedCode(res.code);
-          setOtpCode(res.code);
-        } else {
-          setSuggestedCode(null);
-          setOtpCode('');
-        }
-        setSuccessMessage(res.message || `Verification code sent to ${emailClean}.`);
+        setCooldown(60);
+        setOtpCode('');
+        setSuccessMessage(res.message || 'A verification code has been sent to your email.');
       } else {
-        setError(res.message || 'Failed to send verification code.');
+        setError(res.message || 'Unable to send verification email. Please try again.');
       }
     } catch (err: any) {
       setError('Network connection error. Please ensure the backend server is running.');
@@ -158,14 +151,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({
     try {
       const res = await sendOtp(email.trim().toLowerCase());
       if (res.success) {
-        setCooldown(15);
-        if (res.code) {
-          setSuggestedCode(res.code);
-          setOtpCode(res.code);
-        }
-        setSuccessMessage('A fresh 6-digit verification code has been generated.');
+        setCooldown(60);
+        setSuccessMessage('A verification code has been sent to your email.');
       } else {
-        setError(res.message);
+        setError(res.message || 'Unable to send verification email. Please try again.');
       }
     } catch (err: any) {
       setError('Could not resend code. Please try again later.');
@@ -355,34 +344,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                     autoFocus
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@example.com (any personal or work email)"
+                    placeholder="name@example.com"
                     className="w-full pl-10 pr-4 py-3 rounded-xl bg-navy-950 border border-white/15 focus:border-cyan-400 text-xs text-white placeholder-slate-500 outline-none transition-all font-sans"
                   />
-                </div>
-                {/* Quick email presets for testing different domains */}
-                <div className="mt-2.5">
-                  <span className="text-[10px] text-slate-400 font-medium block mb-1.5">Try different sample emails:</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      { label: 'Gmail', email: 'candidate.user@gmail.com' },
-                      { label: 'Work / Tech', email: 'sarah.analyst@techcorp.io' },
-                      { label: 'College / Student', email: 'student.2026@university.edu' },
-                      { label: 'Freelancer', email: 'alex.consultant@consulting.org' },
-                    ].map((item) => (
-                      <button
-                        key={item.email}
-                        type="button"
-                        onClick={() => setEmail(item.email)}
-                        className={`text-[10px] px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
-                          email === item.email 
-                            ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300' 
-                            : 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:bg-white/10'
-                        }`}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
                 </div>
               </div>
 
@@ -391,7 +355,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 disabled={loading || !email.trim() || !email.includes('@')}
                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold shadow-lg shadow-cyan-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                {loading ? 'Sending 6-Digit Code...' : 'Send Verification Code'}
+                {loading ? 'Sending Verification Code...' : 'Send Verification Code'}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
@@ -423,35 +387,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mx-auto mb-3 shadow-inner">
                 <KeyRound className="w-6 h-6" />
               </div>
-              <h2 className="text-xl font-bold text-white">Enter 6-Digit Code</h2>
+              <h2 className="text-xl font-bold text-white">Enter Verification Code</h2>
               <p className="text-xs text-slate-400">
-                A verification code was sent to <br />
+                A verification code has been sent to <br />
                 <span className="font-mono text-cyan-300 font-semibold">{maskEmail(email)}</span>
               </p>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Please check your email inbox and enter the 6-digit code below.
+              </p>
             </div>
-
-            {suggestedCode && (
-              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs flex items-center justify-between shadow-sm">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
-                  <span>
-                    Your Code: <strong className="font-mono text-sm tracking-widest text-white bg-black/40 px-2 py-0.5 rounded">{suggestedCode}</strong>
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setOtpCode(suggestedCode)}
-                  className="px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 text-[11px] font-semibold transition-colors cursor-pointer"
-                >
-                  Auto-fill
-                </button>
-              </div>
-            )}
 
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider text-center">
-                  Verification Code
+                  6-Digit Verification Code
                 </label>
                 <input
                   type="text"
@@ -461,13 +410,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                   onChange={(e) => {
                     const val = e.target.value.replace(/\D/g, '');
                     setOtpCode(val);
-                    if (val.length === 6) {
-                      // Automatically trigger verify when 6 digits are reached
-                      setTimeout(() => {
-                        const submitBtn = document.getElementById('btn-verify-otp');
-                        if (submitBtn) submitBtn.click();
-                      }, 100);
-                    }
                   }}
                   placeholder="------"
                   className="w-full text-center tracking-[0.6em] font-mono text-3xl py-3.5 rounded-xl bg-navy-950 border border-cyan-500/40 focus:border-cyan-400 text-cyan-300 outline-none transition-all shadow-inner"
@@ -484,7 +426,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({
                 disabled={loading || otpCode.length !== 6}
                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black font-bold text-xs shadow-lg shadow-emerald-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                {loading ? 'Verifying & Unlocking...' : 'Verify & Access Website'}
+                {loading ? 'Verifying Code...' : 'Verify & Access Website'}
                 <CheckCircle2 className="w-4 h-4 text-black" />
               </button>
             </form>
