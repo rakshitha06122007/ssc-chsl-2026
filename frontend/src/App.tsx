@@ -13,27 +13,39 @@ import { HistoryPage } from './pages/HistoryPage';
 import { DemoPage } from './pages/DemoPage';
 import { EvaluationPage } from './pages/EvaluationPage';
 import { SafetyGuidesPage } from './pages/SafetyGuidesPage';
-import { LoginPage } from './pages/LoginPage';
 import { User, VerificationReport } from './types';
 import { getAuthSession, logout } from './services/api';
 
-const PRIVATE_TABS = ['dashboard', 'verify-job', 'history'];
+const DEFAULT_USER: User = {
+  email: 'user@trusthire.ai',
+  is_verified: true,
+  domain_analysis: {
+    email: 'user@trusthire.ai',
+    domain: 'trusthire.ai',
+    domain_type: 'Direct Platform Access',
+    is_free_provider: false,
+    explanation: 'Direct platform access enabled without login requirement.'
+  }
+};
 
 export function App() {
   const [currentTab, setCurrentTab] = useState<string>(() => {
-    if (['#login', '#create-account', '#register', '#verify-email'].includes(window.location.hash)) return 'login';
-    return localStorage.getItem('trusthire_user') ? 'dashboard' : 'landing';
+    const raw = window.location.hash.replace('#', '').trim();
+    if (['dashboard', 'verify-job', 'history', 'company-verify', 'recruiter-email', 'website-analyze', 'message-analyze', 'demo', 'evaluation', 'guides', 'landing'].includes(raw)) {
+      return raw;
+    }
+    return 'dashboard';
   });
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<User>(() => {
     const saved = localStorage.getItem('trusthire_user');
     if (saved) {
       try {
         return JSON.parse(saved);
       } catch (e) {
-        return null;
+        return DEFAULT_USER;
       }
     }
-    return null;
+    return DEFAULT_USER;
   });
   const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
   const [selectedReport, setSelectedReport] = useState<VerificationReport | null>(null);
@@ -44,78 +56,36 @@ export function App() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState<boolean>(false);
 
-  // 1. Check HTTP-only cookie session on load
+  // 1. Sync session on load
   useEffect(() => {
-    let isMounted = true;
     getAuthSession().then((res) => {
-      if (!isMounted) return;
       if (res.authenticated && res.user) {
         setUser(res.user);
         localStorage.setItem('trusthire_user', JSON.stringify(res.user));
       } else {
-        setUser(null);
-        localStorage.removeItem('trusthire_user');
+        setUser(DEFAULT_USER);
+        localStorage.setItem('trusthire_user', JSON.stringify(DEFAULT_USER));
       }
     }).catch(() => {
-      // Offline or network error; retain cached user state if offline
+      setUser(DEFAULT_USER);
     });
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
-  // 2. Hash listener & navigation syncing
+  // 2. Hash listener & navigation syncing (no login gate)
   useEffect(() => {
     const onHashChange = () => {
-      const hash = window.location.hash;
-      if (['#login', '#create-account', '#register', '#verify-email'].includes(hash)) {
-        if (user) {
-          setCurrentTab('dashboard');
-          window.location.hash = '#dashboard';
-        } else {
-          setCurrentTab('login');
-        }
-      } else if (hash === '#landing') {
-        setCurrentTab('landing');
-      } else if (hash === '#dashboard') {
-        if (!user) {
-          setCurrentTab('login');
-          window.location.hash = '#login';
-        } else {
-          setCurrentTab('dashboard');
-        }
-      } else if (hash === '#verify-job') {
-        if (!user) {
-          setCurrentTab('login');
-          window.location.hash = '#login';
-        } else {
-          setCurrentTab('verify-job');
-        }
-      } else if (hash === '#history') {
-        if (!user) {
-          setCurrentTab('login');
-          window.location.hash = '#login';
-        } else {
-          setCurrentTab('history');
-        }
+      const raw = window.location.hash.replace('#', '').trim();
+      if (['login', 'create-account', 'register', 'verify-email'].includes(raw)) {
+        setCurrentTab('dashboard');
+        window.location.hash = '#dashboard';
+      } else if (raw) {
+        setCurrentTab(raw);
       }
     };
 
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
-  }, [user]);
-
-  // 3. Enforce tab route guards on currentTab or user state change
-  useEffect(() => {
-    if (PRIVATE_TABS.includes(currentTab) && !user) {
-      setCurrentTab('login');
-      window.location.hash = '#login';
-    } else if (currentTab === 'login' && user) {
-      setCurrentTab('dashboard');
-      window.location.hash = '#dashboard';
-    }
-  }, [currentTab, user]);
+  }, []);
 
   // 4. Capture PWA beforeinstallprompt event
   useEffect(() => {
@@ -180,11 +150,6 @@ export function App() {
   };
 
   const handleNavigateWithPayload = (tab: string, payload?: any) => {
-    if (PRIVATE_TABS.includes(tab) && !user) {
-      setCurrentTab('login');
-      window.location.hash = '#login';
-      return;
-    }
     if (payload && tab === 'verify-job') {
       setJobInitialPayload(payload);
     }
@@ -198,12 +163,7 @@ export function App() {
       window.location.hash = '#company-verify';
       return;
     }
-    if (PRIVATE_TABS.includes(tab) && !user) {
-      setCurrentTab('login');
-      window.location.hash = '#login';
-      return;
-    }
-    if (tab === 'login' && user) {
+    if (['login', 'create-account', 'register'].includes(tab)) {
       setCurrentTab('dashboard');
       window.location.hash = '#dashboard';
       return;
@@ -281,13 +241,6 @@ export function App() {
             onStartVerification={() => handleTabSelect('verify-job')}
             onExploreDemo={() => handleTabSelect('demo')}
             onSelectTab={handleTabSelect}
-          />
-        )}
-
-        {currentTab === 'login' && (
-          <LoginPage
-            onLoginSuccess={handleLoginSuccess}
-            onNavigateLanding={() => handleTabSelect('landing')}
           />
         )}
 

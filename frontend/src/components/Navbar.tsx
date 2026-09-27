@@ -35,8 +35,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onInstall
 }) => {
   const navItems = [
-    { id: 'landing', label: 'Overview', icon: BookOpen },
-    ...(!user ? [{ id: 'login', label: 'Email & OTP Access', icon: Mail, badge: 'Direct' }] : []),
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'verify-job', label: 'Verify Job', icon: Search, badge: 'Agentic' },
     { id: 'analyzers', label: 'Analyzers', icon: FileText },
@@ -44,6 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'demo', label: 'Demo Mode', icon: Play, badge: '60s Flow' },
     { id: 'evaluation', label: 'Evaluation', icon: FlaskConical, badge: '20 Tests' },
     { id: 'guides', label: 'Safety Guides', icon: BookOpen },
+    { id: 'landing', label: 'Overview', icon: BookOpen },
   ];
 
   return (
@@ -108,31 +107,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {user ? (
+            {user && (
               <div className="flex items-center gap-2">
                 <div className="hidden lg:flex flex-col items-end">
                   <span className="text-xs font-medium text-slate-200">{user.email}</span>
                   <span className="text-[10px] text-emerald-400 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    {user.is_demo_mode ? 'Demo Session' : 'Email Verified'}
+                    <span>Direct Access Active</span>
                   </span>
                 </div>
-                <button
-                  onClick={onLogout}
-                  title="Logout"
-                  className="p-2 rounded-lg border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
               </div>
-            ) : (
-              <button
-                onClick={onOpenAuth}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-semibold shadow-md shadow-cyan-500/20 transition-all hover:scale-[1.02]"
-              >
-                <Mail className="w-3.5 h-3.5" />
-                <span>Email &amp; OTP Access</span>
-              </button>
             )}
           </div>
         </div>
