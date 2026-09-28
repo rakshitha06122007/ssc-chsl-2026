@@ -1,0 +1,11 @@
+{
+  "name": "chsl-mastery",
+  "version": "1.0.0",
+  "description": "CHSL Mastery — SSC CHSL 2026 Complete Preparation Platform",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm run build",
+    "dev": "cd frontend && npm run dev",
+    "preview": "cd frontend && npm run preview"
+  }
+}

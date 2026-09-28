@@ -1,285 +1,241 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar } from './components/Navbar';
+import { CHSLNavbar } from './components/CHSLNavbar';
+import { FocusTimer } from './components/FocusTimer';
+import { DashboardOverview } from './pages/DashboardOverview';
+import { SyllabusTrackerPage } from './pages/SyllabusTrackerPage';
+import { ConceptLessonPage } from './pages/ConceptLessonPage';
+import { AdaptivePracticePage } from './pages/AdaptivePracticePage';
+import { MockTestLabPage } from './pages/MockTestLabPage';
+import { MistakeNotebookPage } from './pages/MistakeNotebookPage';
+import { SpacedRevisionPage } from './pages/SpacedRevisionPage';
+import { StudyRoadmapPage } from './pages/StudyRoadmapPage';
+import { SubjectToolsPage } from './pages/SubjectToolsPage';
+import { AIAssistantPage } from './pages/AIAssistantPage';
+import { AdminContentPage } from './pages/AdminContentPage';
 import { AuthModal } from './components/AuthModal';
-import { VerificationReportModal } from './components/VerificationReportModal';
-import { LandingPage } from './pages/LandingPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { VerifyJobPage } from './pages/VerifyJobPage';
-import { CompanyVerifyPage } from './pages/CompanyVerifyPage';
-import { RecruiterEmailPage } from './pages/RecruiterEmailPage';
-import { WebsiteAnalyzePage } from './pages/WebsiteAnalyzePage';
-import { MessageAnalyzePage } from './pages/MessageAnalyzePage';
-import { HistoryPage } from './pages/HistoryPage';
-import { DemoPage } from './pages/DemoPage';
-import { EvaluationPage } from './pages/EvaluationPage';
-import { SafetyGuidesPage } from './pages/SafetyGuidesPage';
-import { User, VerificationReport } from './types';
-import { getAuthSession, logout } from './services/api';
+import { ExamTier } from './types/chsl';
+import { CHSLStorageService } from './services/chslStorage';
+import { getAuthSession } from './services/api';
+import { User } from './types';
 
-const DEFAULT_USER: User = {
-  email: 'user@trusthire.ai',
+const GUEST_USER: User = {
+  email: 'student@chslmastery.free',
   is_verified: true,
   domain_analysis: {
-    email: 'user@trusthire.ai',
-    domain: 'trusthire.ai',
-    domain_type: 'Direct Platform Access',
+    email: 'student@chslmastery.free',
+    domain: 'chslmastery.free',
+    domain_type: 'Free Guest Mode',
     is_free_provider: false,
-    explanation: 'Direct platform access enabled without login requirement.'
+    explanation: '100% Free Access enabled without mandatory login.'
   }
 };
 
+function normalizeTab(rawHash: string): string {
+  const clean = rawHash.replace('#', '').trim();
+  const validTabs = [
+    'dashboard',
+    'syllabus',
+    'lessons',
+    'practice',
+    'mock-tests',
+    'mistakes',
+    'revision',
+    'planner',
+    'tools',
+    'ai-tutor',
+    'admin'
+  ];
+  if (validTabs.includes(clean)) return clean;
+  if (['mock', 'test', 'tests', 'cbe'].includes(clean)) return 'mock-tests';
+  if (['lesson', 'concept', 'concepts'].includes(clean)) return 'lessons';
+  if (['roadmap', 'plan'].includes(clean)) return 'planner';
+  if (['notebook', 'errors'].includes(clean)) return 'mistakes';
+  if (['typing', 'speed'].includes(clean)) return 'tools';
+  return 'dashboard';
+}
+
 export function App() {
   const [currentTab, setCurrentTab] = useState<string>(() => {
-    const raw = window.location.hash.replace('#', '').trim();
-    if (['dashboard', 'verify-job', 'history', 'company-verify', 'recruiter-email', 'website-analyze', 'message-analyze', 'demo', 'evaluation', 'guides', 'landing'].includes(raw)) {
-      return raw;
-    }
-    return 'dashboard';
+    return normalizeTab(window.location.hash);
   });
+
+  const [activeTier, setActiveTier] = useState<ExamTier>(() => {
+    return CHSLStorageService.getActiveTier();
+  });
+
   const [user, setUser] = useState<User>(() => {
-    const saved = localStorage.getItem('trusthire_user');
+    const saved = localStorage.getItem('chsl_user');
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
-        return DEFAULT_USER;
+      } catch {
+        return GUEST_USER;
       }
     }
-    return DEFAULT_USER;
+    return GUEST_USER;
   });
-  const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
-  const [selectedReport, setSelectedReport] = useState<VerificationReport | null>(null);
-  const [showReportModal, setShowReportModal] = useState<boolean>(false);
-  const [jobInitialPayload, setJobInitialPayload] = useState<Record<string, any> | undefined>(undefined);
 
-  // PWA installation prompt event state
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstallable, setIsInstallable] = useState<boolean>(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isTimerOpen, setIsTimerOpen] = useState<boolean>(false);
+  const [navPayload, setNavPayload] = useState<any>(null);
 
-  // 1. Sync session on load
+  // Sync auth session on load
   useEffect(() => {
     getAuthSession().then((res) => {
       if (res.authenticated && res.user) {
         setUser(res.user);
-        localStorage.setItem('trusthire_user', JSON.stringify(res.user));
-      } else {
-        setUser(DEFAULT_USER);
-        localStorage.setItem('trusthire_user', JSON.stringify(DEFAULT_USER));
+        localStorage.setItem('chsl_user', JSON.stringify(res.user));
       }
-    }).catch(() => {
-      setUser(DEFAULT_USER);
-    });
+    }).catch(() => {});
   }, []);
 
-  // 2. Hash listener & navigation syncing (no login gate)
+  // Sync hash routing
   useEffect(() => {
     const onHashChange = () => {
-      const raw = window.location.hash.replace('#', '').trim();
-      if (['login', 'create-account', 'register', 'verify-email'].includes(raw)) {
-        setCurrentTab('dashboard');
-        window.location.hash = '#dashboard';
-      } else if (raw) {
-        setCurrentTab(raw);
-      }
+      const normalized = normalizeTab(window.location.hash);
+      setCurrentTab(normalized);
     };
-
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  // 4. Capture PWA beforeinstallprompt event
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setIsInstallable(true);
-    };
-
-    const handleAppInstalled = () => {
-      setDeferredPrompt(null);
-      setIsInstallable(false);
-      console.log('TrustHire PWA was successfully installed.');
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
-    };
-  }, []);
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    try {
-      deferredPrompt.prompt();
-      const choiceResult = await deferredPrompt.userChoice;
-      if (choiceResult.outcome === 'accepted') {
-        setIsInstallable(false);
-        setDeferredPrompt(null);
-      }
-    } catch (e) {
-      console.error('PWA install prompt error:', e);
-    }
-  };
-
-  const handleLoginSuccess = (authenticatedUser: User) => {
-    setUser(authenticatedUser);
-    localStorage.setItem('trusthire_user', JSON.stringify(authenticatedUser));
-    setAuthModalOpen(false);
-    setCurrentTab('dashboard');
-    window.location.hash = '#dashboard';
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (e) {
-      console.error('Logout error:', e);
-    }
-    setUser(null);
-    localStorage.removeItem('trusthire_user');
-    setCurrentTab('landing');
-    window.location.hash = '#landing';
-  };
-
-  const handleViewReport = (report: VerificationReport) => {
-    setSelectedReport(report);
-    setShowReportModal(true);
-  };
-
-  const handleNavigateWithPayload = (tab: string, payload?: any) => {
-    if (payload && tab === 'verify-job') {
-      setJobInitialPayload(payload);
-    }
+  const handleSelectTab = (tab: string, payload?: any) => {
     setCurrentTab(tab);
     window.location.hash = `#${tab}`;
+    if (payload) {
+      setNavPayload(payload);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleTabSelect = (tab: string) => {
-    if (tab === 'analyzers') {
-      setCurrentTab('company-verify');
-      window.location.hash = '#company-verify';
-      return;
-    }
-    if (['login', 'create-account', 'register'].includes(tab)) {
-      setCurrentTab('dashboard');
-      window.location.hash = '#dashboard';
-      return;
-    }
-    setCurrentTab(tab);
-    window.location.hash = `#${tab}`;
+  const handleToggleTier = (tier: ExamTier) => {
+    setActiveTier(tier);
+    CHSLStorageService.setActiveTier(tier);
   };
+
+  const isCloudSynced = user.email !== GUEST_USER.email;
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans pb-16 md:pb-0">
-      {/* Navbar */}
-      <Navbar
+    <div className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
+      
+      {/* Top Navbar */}
+      <CHSLNavbar
         currentTab={currentTab}
-        setCurrentTab={handleTabSelect}
-        user={user}
-        onOpenAuth={() => setCurrentTab('login')}
-        onLogout={handleLogout}
-        isInstallable={isInstallable}
-        onInstall={handleInstallClick}
+        onSelectTab={handleSelectTab}
+        activeTier={activeTier}
+        onToggleTier={handleToggleTier}
+        onOpenTimer={() => setIsTimerOpen(!isTimerOpen)}
+        isLoggedIn={isCloudSynced}
+        onOpenAuth={() => setIsAuthModalOpen(true)}
       />
 
-      {/* Sub-navigation bar for Standalone Analyzers */}
-      {['company-verify', 'recruiter-email', 'website-analyze', 'message-analyze'].includes(currentTab) && (
-        <div className="bg-navy-950/60 border-b border-white/5 py-2.5 px-4 sm:px-6">
-          <div className="max-w-5xl mx-auto flex items-center gap-2 overflow-x-auto text-xs">
-            <span className="text-slate-500 font-mono uppercase text-[10px] mr-2">Analyzers:</span>
-            <button
-              onClick={() => handleTabSelect('company-verify')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                currentTab === 'company-verify' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Verify Company
-            </button>
-            <button
-              onClick={() => handleTabSelect('recruiter-email')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                currentTab === 'recruiter-email' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Recruiter Email
-            </button>
-            <button
-              onClick={() => handleTabSelect('website-analyze')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                currentTab === 'website-analyze' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Website & Domain
-            </button>
-            <button
-              onClick={() => handleTabSelect('message-analyze')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                currentTab === 'message-analyze' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold' : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              Job Message
-            </button>
-          </div>
+      {/* Floating Focus Timer Drawer if opened */}
+      {isTimerOpen && (
+        <div className="fixed top-20 right-4 z-50 max-w-sm w-full shadow-2xl animate-in fade-in slide-in-from-top-4 duration-200">
+          <FocusTimer onClose={() => setIsTimerOpen(false)} />
         </div>
       )}
 
-      {/* Main Page Routing */}
-      <main className="flex-1">
+      {/* Main Body Content Container */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         {currentTab === 'dashboard' && (
-          <DashboardPage
-            user={user}
-            onNavigate={handleNavigateWithPayload}
-            onViewReport={handleViewReport}
+          <DashboardOverview
+            activeTier={activeTier}
+            onSelectTier={handleToggleTier}
+            onNavigate={handleSelectTab}
           />
         )}
 
-        {currentTab === 'landing' && (
-          <LandingPage
-            onStartVerification={() => handleTabSelect('verify-job')}
-            onExploreDemo={() => handleTabSelect('demo')}
-            onSelectTab={handleTabSelect}
+        {currentTab === 'syllabus' && (
+          <SyllabusTrackerPage
+            activeTier={activeTier}
+            onSelectTier={handleToggleTier}
+            onNavigateToLesson={(topicId) => handleSelectTab('lessons', { topicId })}
+            onNavigateToPractice={(topicId) => handleSelectTab('practice', { topicId })}
           />
         )}
 
-        {currentTab === 'verify-job' && (
-          <VerifyJobPage
-            user={user}
-            initialPayload={jobInitialPayload}
+        {currentTab === 'lessons' && (
+          <ConceptLessonPage
+            initialTopicId={navPayload?.topicId || 'quant_percentage_profit'}
+            onNavigateToPractice={(topicId) => handleSelectTab('practice', { topicId })}
+            onNavigateToRevision={() => handleSelectTab('revision')}
           />
         )}
 
-        {currentTab === 'company-verify' && <CompanyVerifyPage />}
-        {currentTab === 'recruiter-email' && <RecruiterEmailPage />}
-        {currentTab === 'website-analyze' && <WebsiteAnalyzePage />}
-        {currentTab === 'message-analyze' && <MessageAnalyzePage />}
-
-        {currentTab === 'history' && (
-          <HistoryPage onViewReport={handleViewReport} />
+        {currentTab === 'practice' && (
+          <AdaptivePracticePage
+            initialTopicId={navPayload?.topicId}
+            onNavigateToMistakes={() => handleSelectTab('mistakes')}
+          />
         )}
 
-        {currentTab === 'demo' && <DemoPage />}
-        {currentTab === 'evaluation' && <EvaluationPage />}
-        {currentTab === 'guides' && <SafetyGuidesPage />}
+        {currentTab === 'mock-tests' && (
+          <MockTestLabPage
+            activeTier={activeTier}
+            onNavigateToLessons={(topicId) => handleSelectTab('lessons', { topicId })}
+            onNavigateToRevision={() => handleSelectTab('revision')}
+          />
+        )}
+
+        {currentTab === 'mistakes' && (
+          <MistakeNotebookPage
+            onNavigateToLessons={(topicId) => handleSelectTab('lessons', { topicId })}
+          />
+        )}
+
+        {currentTab === 'revision' && (
+          <SpacedRevisionPage />
+        )}
+
+        {currentTab === 'planner' && (
+          <StudyRoadmapPage />
+        )}
+
+        {currentTab === 'tools' && (
+          <SubjectToolsPage />
+        )}
+
+        {currentTab === 'ai-tutor' && (
+          <AIAssistantPage />
+        )}
+
+        {currentTab === 'admin' && (
+          <AdminContentPage />
+        )}
       </main>
 
-      {/* Authentication Modal */}
+      {/* Footer */}
+      <footer className="border-t border-slate-800/80 bg-[#090d16] py-8 text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
+            <span className="font-extrabold text-slate-300">
+              CHSL Mastery — SSC CHSL 2026 Complete Preparation Platform
+            </span>
+            <span className="hidden sm:inline">•</span>
+            <span>Free Public Access • Zero Mandatory Login</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <button onClick={() => handleSelectTab('syllabus')} className="hover:text-slate-300 transition">Official Syllabus</button>
+            <button onClick={() => handleSelectTab('mock-tests')} className="hover:text-slate-300 transition">Mock Test Lab</button>
+            <button onClick={() => handleSelectTab('tools')} className="hover:text-slate-300 transition">35 WPM Typing Test</button>
+            <button onClick={() => handleSelectTab('admin')} className="hover:text-slate-300 transition">Admin Tools</button>
+          </div>
+        </div>
+      </footer>
+
+      {/* Cloud Authentication Modal */}
       <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        onSuccess={handleLoginSuccess}
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(loggedUser) => {
+          setUser(loggedUser);
+          localStorage.setItem('chsl_user', JSON.stringify(loggedUser));
+          setIsAuthModalOpen(false);
+        }}
       />
 
-      {/* Opportunity Verification Report Modal */}
-      <VerificationReportModal
-        report={selectedReport}
-        isOpen={showReportModal}
-        onClose={() => setShowReportModal(false)}
-      />
     </div>
   );
 }
-
 export default App;

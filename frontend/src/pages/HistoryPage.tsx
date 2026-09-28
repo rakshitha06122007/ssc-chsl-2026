@@ -121,7 +121,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({ onViewReport }) => {
           {filteredHistory.map((item) => (
             <div 
               key={item.id}
-              className="glass-panel rounded-2xl p-5 border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between space-y-4"
+              className="glass-panel rounded-2xl p-5 border border-white/10 hover:border-violet-500/30 transition-all flex flex-col justify-between space-y-4 shadow-sm"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -131,7 +131,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({ onViewReport }) => {
 
                 <div>
                   <h3 className="text-base font-bold text-white">{item.company_name}</h3>
-                  <p className="text-xs text-slate-300 font-medium">{item.job_title}</p>
+                  <p className="text-xs text-indigo-300 font-medium">{item.job_title}</p>
                 </div>
 
                 <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
@@ -155,10 +155,10 @@ export const HistoryPage: React.FC<HistoryPageProps> = ({ onViewReport }) => {
                   {item.report && (
                     <button
                       onClick={() => onViewReport(item.report!)}
-                      className="px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 text-violet-300 border border-violet-500/30 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <Eye className="w-3.5 h-3.5" />
-                      <span>View Report</span>
+                      <span>View Dossier</span>
                     </button>
                   )}
                 </div>

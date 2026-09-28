@@ -45,7 +45,10 @@ from evaluation.eval_runner import run_evaluation
 # Initialize SQLite tables
 init_db()
 
+from app.chsl_api import chsl_bp
+
 app = Flask(__name__)
+app.register_blueprint(chsl_bp)
 
 # Configure CORS securely for the frontend domain with credentials support
 allowed_origins = list({

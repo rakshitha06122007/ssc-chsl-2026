@@ -1,16 +1,12 @@
 import React from 'react';
 import { 
   ShieldCheck, 
-  Home, 
   Search, 
-  FileText, 
-  History, 
+  Zap, 
+  Activity, 
   FlaskConical, 
-  Play, 
-  BookOpen, 
-  User as UserIcon, 
-  LogOut,
-  Mail,
+  Clock, 
+  Lock,
   ArrowDownToLine
 } from 'lucide-react';
 import { User } from '../types';
@@ -19,8 +15,7 @@ interface NavbarProps {
   currentTab: string;
   setCurrentTab: (tab: string) => void;
   user: User | null;
-  onOpenAuth: () => void;
-  onLogout: () => void;
+  onOpenPrivacy: () => void;
   isInstallable?: boolean;
   onInstall?: () => void;
 }
@@ -28,119 +23,150 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   setCurrentTab,
-  user,
-  onOpenAuth,
-  onLogout,
+  onOpenPrivacy,
   isInstallable = false,
   onInstall
 }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'verify-job', label: 'Verify Job', icon: Search, badge: 'Agentic' },
-    { id: 'analyzers', label: 'Analyzers', icon: FileText },
-    { id: 'history', label: 'History', icon: History },
-    { id: 'demo', label: 'Demo Mode', icon: Play, badge: '60s Flow' },
-    { id: 'evaluation', label: 'Evaluation', icon: FlaskConical, badge: '20 Tests' },
-    { id: 'guides', label: 'Safety Guides', icon: BookOpen },
-    { id: 'landing', label: 'Overview', icon: BookOpen },
+    { 
+      id: 'studio', 
+      label: 'Investigation Studio', 
+      icon: Search, 
+      badge: 'Omni-Scan'
+    },
+    { 
+      id: 'fast', 
+      label: 'Fast Verify', 
+      icon: Zap, 
+      badge: '1-Click'
+    },
+    { 
+      id: 'command', 
+      label: 'Command Center', 
+      icon: Activity, 
+      badge: 'Threat Radar'
+    },
+    { 
+      id: 'lab', 
+      label: 'Scam Lab', 
+      icon: FlaskConical, 
+      badge: 'Simulator'
+    },
+    { 
+      id: 'history', 
+      label: 'History', 
+      icon: Clock
+    },
   ];
 
   return (
-    <>
-      {/* Desktop Top Navbar */}
-      <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#090d16]/90 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          {/* Logo & Tagline */}
-          <div 
-            onClick={() => setCurrentTab('dashboard')}
-            className="flex items-center gap-3 cursor-pointer group"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-              <ShieldCheck className="w-6 h-6 text-white" />
+    <header className="sticky top-0 z-40 w-full px-3 sm:px-6 pt-3 pb-2 bg-[#0b0f19]/85 backdrop-blur-2xl border-b border-white/10 transition-all">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        {/* Brand Logo */}
+        <div 
+          onClick={() => setCurrentTab('studio')}
+          className="flex items-center gap-3 cursor-pointer group shrink-0"
+        >
+          <div className="relative">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-105 group-hover:shadow-indigo-500/50 transition-all duration-300">
+              <ShieldCheck className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-lg tracking-tight text-white">TrustHire</span>
-                <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">AI</span>
-              </div>
-              <p className="text-[10px] text-slate-400 font-medium tracking-wide hidden sm:block">Verify Before You Trust</p>
-            </div>
+            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0b0f19] shadow-sm animate-pulse" />
           </div>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentTab === item.id || (item.id === 'analyzers' && ['company-verify', 'recruiter-email', 'website-analyze', 'message-analyze'].includes(currentTab));
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setCurrentTab(item.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                    isActive 
-                      ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 shadow-sm' 
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="text-[9px] px-1 py-0.2 rounded bg-white/10 text-slate-300 font-mono">
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Action & User Auth Section */}
-          <div className="flex items-center gap-2">
-            {isInstallable && onInstall && (
-              <button
-                onClick={onInstall}
-                title="Install TrustHire Web App"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all shadow-sm shadow-emerald-500/10 hover:scale-[1.02] cursor-pointer"
-              >
-                <ArrowDownToLine className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Install App</span>
-              </button>
-            )}
-
-            {user && (
-              <div className="flex items-center gap-2">
-                <div className="hidden lg:flex flex-col items-end">
-                  <span className="text-xs font-medium text-slate-200">{user.email}</span>
-                  <span className="text-[10px] text-emerald-400 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>Direct Access Active</span>
-                  </span>
-                </div>
-              </div>
-            )}
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold text-base sm:text-lg tracking-tight text-white group-hover:text-indigo-200 transition-colors">
+                TrustHire
+              </span>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/40 font-mono tracking-wider">
+                AI
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400 font-medium tracking-wide hidden sm:block">
+              Multi-Agent Forensic Verification
+            </p>
           </div>
         </div>
-      </header>
 
-      {/* Mobile Bottom Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#090d16]/95 border-t border-white/10 backdrop-blur-lg px-2 py-1 flex justify-around items-center">
-        {navItems.slice(0, 5).map((item) => {
-          const Icon = item.icon;
-          const isActive = currentTab === item.id;
-          return (
+        {/* Feature Navigation Tabs */}
+        <nav className="hidden lg:flex items-center p-1.5 rounded-2xl bg-[#11182c]/80 border border-white/10 shadow-lg shadow-black/20 backdrop-blur-md gap-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setCurrentTab(item.id)}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? 'bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 text-white shadow-md shadow-indigo-500/30 border border-white/15'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                <span>{item.label}</span>
+                {item.badge && (
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${
+                    isActive ? 'bg-white/20 text-white' : 'bg-white/5 text-slate-400'
+                  }`}>
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Mobile Navigation Dropdown/Pills */}
+        <div className="flex lg:hidden items-center gap-1 overflow-x-auto py-1">
+          {navItems.slice(0, 3).map((item) => {
+            const Icon = item.icon;
+            const isActive = currentTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setCurrentTab(item.id)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold ${
+                  isActive ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{item.label.split(' ')[0]}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right Action Section */}
+        <div className="flex items-center gap-2.5">
+          {isInstallable && onInstall && (
             <button
-              key={item.id}
-              onClick={() => setCurrentTab(item.id)}
-              className={`flex flex-col items-center gap-0.5 py-1.5 px-2 rounded-lg text-[10px] font-medium transition-colors ${
-                isActive ? 'text-cyan-400 font-bold' : 'text-slate-400 hover:text-slate-200'
-              }`}
+              onClick={onInstall}
+              title="Install App"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 border border-violet-500/30 text-xs font-semibold transition-all cursor-pointer shadow-sm hover:scale-[1.02]"
             >
-              <Icon className="w-5 h-5" />
-              <span>{item.label}</span>
+              <ArrowDownToLine className="w-3.5 h-3.5" />
+              <span>Install</span>
             </button>
-          );
-        })}
-      </nav>
-    </>
+          )}
+
+          <button
+            onClick={onOpenPrivacy}
+            title="Privacy & Data Charter"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-semibold border border-white/10 hover:border-violet-500/30 transition-all cursor-pointer"
+          >
+            <Lock className="w-3.5 h-3.5 text-violet-400" />
+            <span className="hidden md:inline">Privacy</span>
+          </button>
+
+          {/* Direct Access Pill */}
+          <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-semibold text-emerald-300">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Direct Access</span>
+          </div>
+        </div>
+      </div>
+    </header>
   );
 };
