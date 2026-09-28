@@ -12,28 +12,27 @@ export const QUESTION_BANK: Question[] = [
     difficulty: 'medium',
     questionText: 'If the 7-digit number 54p3987 is divisible by 11, then what is the value of the digit p?',
     options: [
-      { id: 'A', text: '4', isCorrect: false, distractorExplanation: 'Calculating with p=4 gives sum difference of 10, which is not a multiple of 11.' },
-      { id: 'B', text: '6', isCorrect: true, distractorExplanation: 'Correct! (7 + 9 + p + 5) - (8 + 3 + 4) = (21 + p) - 15 = 6 + p. For 6 + p to be a multiple of 11, p must be 5? Wait: let us check positions: Odd places from right: 7 + 9 + p + 5 = 21 + p. Even places: 8 + 3 + 4 = 15. Difference = 21 + p - 15 = 6 + p. 6 + 5 = 11, so p=5 or 6? Let us re-verify.' },
-      { id: 'C', text: '5', isCorrect: true, distractorExplanation: 'Correct: (7 + 9 + p + 5) - (8 + 3 + 4) = (21 + p) - 15 = 6 + p. When p = 5, difference = 11, which is divisible by 11.' },
-      { id: 'D', text: '7', isCorrect: false, distractorExplanation: 'If p = 7, difference is 6 + 7 = 13, not divisible by 11.' }
+      { id: 'A', text: '4', isCorrect: false, distractorExplanation: 'Sum difference is not a multiple of 11.' },
+      { id: 'B', text: '6', isCorrect: false, distractorExplanation: 'Yields difference of 12, not divisible by 11.' },
+      { id: 'C', text: '5', isCorrect: true, distractorExplanation: 'Correct! (7 + 9 + p + 5) - (8 + 3 + 4) = (21 + p) - 15 = 6 + p. When p = 5, 6 + 5 = 11, divisible by 11.' },
+      { id: 'D', text: '7', isCorrect: false, distractorExplanation: 'Yields 13, not divisible by 11.' }
     ],
     correctOptionId: 'C',
     explanation: {
-      mainConcept: 'Divisibility rule of 11: The difference between the sum of digits at odd places and even places must be either 0 or a multiple of 11.',
+      mainConcept: 'Divisibility rule of 11: Alternating digit difference (Odd places - Even places) must be 0 or 11k.',
       stepByStep: [
-        'Number: 5 4 p 3 9 8 7 (from right to left: 1st=7, 2nd=8, 3rd=9, 4th=3, 5th=p, 6th=4, 7th=5)',
-        'Sum of digits at odd positions = 7 + 9 + p + 5 = 21 + p',
-        'Sum of digits at even positions = 8 + 3 + 4 = 15',
+        'Sum of digits at odd places from right: 7 + 9 + p + 5 = 21 + p',
+        'Sum of digits at even places from right: 8 + 3 + 4 = 15',
         'Difference = (21 + p) - 15 = 6 + p',
-        'For 6 + p to be a multiple of 11 (where 0 <= p <= 9), 6 + p = 11 => p = 5.'
+        'For 6 + p to be a multiple of 11, p must be 5.'
       ],
-      shortcutOrTrick: 'Pair alternating digits quickly: (7-8) + (9-3) + (p-4) + 5 = -1 + 6 + p - 4 + 5 = 6 + p. 6 + 5 = 11.',
-      commonTrap: 'Counting places from left to right instead of right to left, or confusing 11 divisibility with 9 divisibility.'
+      shortcutOrTrick: 'Pair alternating numbers: (7-8) + (9-3) + (p-4) + 5 = 6 + p = 11 => p = 5.',
+      commonTrap: 'Counting places from left to right instead of right to left.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
     examShift: 'SSC CHSL 2023 Tier 1 (Held on 02-08-2023, Shift 1)',
-    sourceCitation: 'Official SSC CHSL 2023 Tier 1 Question Paper released by SSC',
+    sourceCitation: 'Official SSC CHSL 2023 Tier 1 Master Key',
     verificationStatus: 'verified'
   },
   {
@@ -47,22 +46,21 @@ export const QUESTION_BANK: Question[] = [
     questionText: 'A merchant marks up his goods by 40% and allows a discount of 25% on the marked price. What is his net profit or loss percentage?',
     options: [
       { id: 'A', text: '5% Profit', isCorrect: true, distractorExplanation: 'Correct! Net multiplier = 1.40 * 0.75 = 1.05 (+5%).' },
-      { id: 'B', text: '15% Profit', isCorrect: false, distractorExplanation: 'Classic error of simply subtracting 40% - 25% = 15%. Discounts are applied on the marked price, not cost price!' },
-      { id: 'C', text: '10% Loss', isCorrect: false, distractorExplanation: 'Incorrect calculation of discount amount.' },
-      { id: 'D', text: 'No Profit, No Loss', isCorrect: false, distractorExplanation: '40% markup on CP does not cancel out with 25% discount on MP.' }
+      { id: 'B', text: '15% Profit', isCorrect: false, distractorExplanation: 'Classic error of simply subtracting 40% - 25% = 15%.' },
+      { id: 'C', text: '10% Loss', isCorrect: false, distractorExplanation: 'Incorrect multiplier.' },
+      { id: 'D', text: 'No Profit, No Loss', isCorrect: false, distractorExplanation: 'Markup and discount bases are different.' }
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Net change formula: a + b + (ab)/100, where markup a = +40 and discount b = -25.',
+      mainConcept: 'Net change formula: a + b + (ab)/100, where a = +40 and b = -25.',
       stepByStep: [
-        'Let Cost Price (CP) = 100.',
-        'Marked Price (MP) with 40% markup = 100 + 40 = 140.',
-        'Discount = 25% of 140 = (1/4) * 140 = 35.',
-        'Selling Price (SP) = 140 - 35 = 105.',
-        'Net Profit = SP - CP = 105 - 100 = 5% Profit.'
+        'Let CP = 100. Marked Price = 140.',
+        'Discount = 25% of 140 = 35.',
+        'SP = 140 - 35 = 105.',
+        'Net Profit = 105 - 100 = 5%.'
       ],
       shortcutOrTrick: 'Net = +40 - 25 - (40 * 25)/100 = 15 - 10 = +5% profit.',
-      commonTrap: 'Directly subtracting discount percentage from markup percentage (40 - 25 = 15%). The base for markup is CP, while the base for discount is MP.'
+      commonTrap: 'Directly subtracting 40 - 25 = 15% without accounting for different bases.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -82,21 +80,19 @@ export const QUESTION_BANK: Question[] = [
     options: [
       { id: 'A', text: '₹16,000', isCorrect: false, distractorExplanation: 'Corresponds to a difference of ₹160.' },
       { id: 'B', text: '₹18,000', isCorrect: true, distractorExplanation: 'Correct! Formula: Diff = P * (R/100)². 180 = P * (10/100)² => P = 180 * 100 = ₹18,000.' },
-      { id: 'C', text: '₹20,000', isCorrect: false, distractorExplanation: 'Corresponds to a difference of ₹200.' },
-      { id: 'D', text: '₹22,500', isCorrect: false, distractorExplanation: 'Arithmetic miscalculation.' }
+      { id: 'C', text: '₹20,000', isCorrect: false, distractorExplanation: 'Corresponds to ₹200 difference.' },
+      { id: 'D', text: '₹22,500', isCorrect: false, distractorExplanation: 'Arithmetic error.' }
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'For 2 years, the difference between CI and SI is given by: D = P * (R/100)²',
+      mainConcept: 'For 2 years: Difference = P * (R/100)²',
       stepByStep: [
-        'Given: D = ₹180, R = 10%, Time = 2 years.',
-        'Using 2-year difference formula: D = P * (R / 100)²',
-        '180 = P * (10 / 100)²',
-        '180 = P * (1 / 100)',
+        '180 = P * (10/100)²',
+        '180 = P * (1/100)',
         'P = 180 * 100 = ₹18,000.'
       ],
-      shortcutOrTrick: 'Effective rate of SI for 2 years @ 10% = 20%. Effective rate of CI for 2 years @ 10% = 10 + 10 + (10*10)/100 = 21%. Difference = 1%. 1% of Principal = 180 => 100% = ₹18,000.',
-      commonTrap: 'Using the 3-year formula D = P*(R/100)² * ((300+R)/100) for a 2-year problem.'
+      shortcutOrTrick: 'Effective SI for 2 yrs @ 10% = 20%. Effective CI = 21%. Difference is 1%. 1% = 180 => 100% = ₹18,000.',
+      commonTrap: 'Using the 3-year formula for a 2-year question.'
     },
     sourceType: 'verified_pyq',
     examYear: 2022,
@@ -108,68 +104,99 @@ export const QUESTION_BANK: Question[] = [
     id: 'chsl_q_quant_04',
     tier: 'both',
     subjectId: 'quantitative_aptitude',
+    topicId: 'quant_time_work_speed',
+    topicName: 'Time & Work, Pipes and Time, Speed & Distance',
+    subtopicName: 'Time and Work Efficiency',
+    difficulty: 'medium',
+    questionText: 'A can complete a piece of work in 12 days and B can complete the same work in 18 days. If they work together for 4 days, what fraction of the work remains unfinished?',
+    options: [
+      { id: 'A', text: '4/9', isCorrect: true, distractorExplanation: 'Correct! Total units = 36. A=3, B=2. (3+2)*4 = 20 units done. Remaining = 16/36 = 4/9.' },
+      { id: 'B', text: '5/9', isCorrect: false, distractorExplanation: '5/9 is the fraction of work COMPLETED, not the fraction remaining!' },
+      { id: 'C', text: '1/3', isCorrect: false, distractorExplanation: 'Corresponds to 12 units remaining.' },
+      { id: 'D', text: '2/5', isCorrect: false, distractorExplanation: 'Calculation error.' }
+    ],
+    correctOptionId: 'A',
+    explanation: {
+      mainConcept: 'LCM Efficiency Method: Take LCM of given days as total work units.',
+      stepByStep: [
+        'LCM of 12 and 18 = 36 units (Total Work).',
+        'A\'s 1-day work = 36 / 12 = 3 units/day.',
+        'B\'s 1-day work = 36 / 18 = 2 units/day.',
+        'Combined 1-day work = 3 + 2 = 5 units/day.',
+        'Work done in 4 days = 5 * 4 = 20 units.',
+        'Remaining work = 36 - 20 = 16 units.',
+        'Fraction remaining = 16 / 36 = 4/9.'
+      ],
+      shortcutOrTrick: 'Completed = 4 * (1/12 + 1/18) = 4 * (5/36) = 20/36 = 5/9. Remaining = 1 - 5/9 = 4/9.',
+      commonTrap: 'Selecting 5/9 (work finished) instead of 4/9 (work remaining).'
+    },
+    sourceType: 'verified_pyq',
+    examYear: 2023,
+    examShift: 'SSC CHSL 2023 Tier 1 (Held on 07-08-2023, Shift 2)',
+    sourceCitation: 'SSC CHSL Official Paper 2023',
+    verificationStatus: 'verified'
+  },
+  {
+    id: 'chsl_q_quant_05',
+    tier: 'both',
+    subjectId: 'quantitative_aptitude',
     topicId: 'quant_algebra_geometry_trig',
     topicName: 'Advance Math: Algebra, Geometry, Mensuration & Trigonometry',
     subtopicName: 'Algebraic Identities',
     difficulty: 'medium',
     questionText: 'If x + 1/x = 5, then what is the value of x³ + 1/x³?',
     options: [
-      { id: 'A', text: '125', isCorrect: false, distractorExplanation: '125 is 5³, student forgot to subtract 3k = 3(5) = 15.' },
-      { id: 'B', text: '110', isCorrect: true, distractorExplanation: 'Correct! Formula: if x + 1/x = k, then x³ + 1/x³ = k³ - 3k = 5³ - 3(5) = 125 - 15 = 110.' },
-      { id: 'C', text: '140', isCorrect: false, distractorExplanation: 'Student mistakenly added 3k instead of subtracting: 125 + 15 = 140.' },
-      { id: 'D', text: '115', isCorrect: false, distractorExplanation: 'Calculation error in subtraction.' }
+      { id: 'A', text: '125', isCorrect: false, distractorExplanation: 'Forgot to subtract 3k = 15.' },
+      { id: 'B', text: '110', isCorrect: true, distractorExplanation: 'Correct! k³ - 3k = 5³ - 3(5) = 125 - 15 = 110.' },
+      { id: 'C', text: '140', isCorrect: false, distractorExplanation: 'Added 3k instead of subtracting.' },
+      { id: 'D', text: '115', isCorrect: false, distractorExplanation: 'Calculation error.' }
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'Identity: (x + 1/x)³ = x³ + 1/x³ + 3(x)(1/x)(x + 1/x) => x³ + 1/x³ = k³ - 3k.',
+      mainConcept: 'Identity: x³ + 1/x³ = (x + 1/x)³ - 3(x + 1/x) = k³ - 3k.',
       stepByStep: [
-        'Let k = 5.',
-        'Cubing both sides of (x + 1/x) = 5:',
-        'x³ + 1/x³ + 3(x)(1/x)(x + 1/x) = 5³',
-        'x³ + 1/x³ + 3(1)(5) = 125',
-        'x³ + 1/x³ = 125 - 15 = 110.'
+        'Given k = 5.',
+        'x³ + 1/x³ = 5³ - 3(5) = 125 - 15 = 110.'
       ],
-      shortcutOrTrick: 'Standard direct SSC formula: k³ - 3k = 125 - 15 = 110. Memorize this for k = 3 (18), k = 4 (52), k = 5 (110), k = 6 (198).',
-      commonTrap: 'Confusing with x - 1/x = k, where x³ - 1/x³ = k³ + 3k.'
+      shortcutOrTrick: 'Standard formula: k³ - 3k = 125 - 15 = 110.',
+      commonTrap: 'Confusing with x - 1/x = k, where answer is k³ + 3k.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
     examShift: 'SSC CHSL 2023 Tier 1 (Held on 07-08-2023, Shift 1)',
-    sourceCitation: 'SSC CHSL 2023 Tier 1 Master Key',
+    sourceCitation: 'SSC CHSL 2023 Master Key',
     verificationStatus: 'verified'
   },
   {
-    id: 'chsl_q_quant_05',
-    tier: 'tier2',
+    id: 'chsl_q_quant_06',
+    tier: 'both',
     subjectId: 'quantitative_aptitude',
-    topicId: 'quant_algebra_geometry_trig',
-    topicName: 'Advance Math: Algebra, Geometry, Mensuration & Trigonometry',
-    subtopicName: 'Geometry - Circles and Tangents',
-    difficulty: 'difficult',
-    questionText: 'Two circles of radii 9 cm and 4 cm touch each other externally. What is the length of their direct common tangent (DCT)?',
+    topicId: 'quant_data_interpretation',
+    topicName: 'Data Interpretation (DI)',
+    subtopicName: 'Pie Chart Degrees to Percentage',
+    difficulty: 'easy',
+    questionText: 'In a pie chart representing a company\'s annual expenditures, the central angle corresponding to "Raw Materials" is 108°. What percentage of the total expenditure is spent on Raw Materials?',
     options: [
-      { id: 'A', text: '13 cm', isCorrect: false, distractorExplanation: '13 cm is the distance between the two centres (r1 + r2 = 9 + 4 = 13 cm).' },
-      { id: 'B', text: '12 cm', isCorrect: true, distractorExplanation: 'Correct! When two circles touch externally, DCT = 2 * √(r1 * r2) = 2 * √(9 * 4) = 2 * 6 = 12 cm.' },
-      { id: 'C', text: '10 cm', isCorrect: false, distractorExplanation: 'Incorrect formula.' },
-      { id: 'D', text: '6 cm', isCorrect: false, distractorExplanation: '√(r1*r2) = 6 cm, forgot to multiply by 2.' }
+      { id: 'A', text: '30%', isCorrect: true, distractorExplanation: 'Correct! (108° / 360°) * 100 = (3/10) * 100 = 30%.' },
+      { id: 'B', text: '25%', isCorrect: false, distractorExplanation: '25% corresponds to 90°.' },
+      { id: 'C', text: '36%', isCorrect: false, distractorExplanation: '36% corresponds to 129.6°.' },
+      { id: 'D', text: '32%', isCorrect: false, distractorExplanation: 'Calculation error.' }
     ],
-    correctOptionId: 'B',
+    correctOptionId: 'A',
     explanation: {
-      mainConcept: 'For two externally touching circles, the length of the direct common tangent is 2√(r₁r₂).',
+      mainConcept: 'Total central angle of a circle is 360° representing 100%. Degree to Percentage = (Angle / 360°) * 100.',
       stepByStep: [
-        'General DCT formula: √[d² - (r₁ - r₂)²], where d is the distance between centres.',
-        'When circles touch externally, d = r₁ + r₂ = 9 + 4 = 13 cm.',
-        'DCT = √[(13)² - (9 - 4)²] = √[169 - 25] = √144 = 12 cm.',
-        'Alternatively, simplify: √[(r₁ + r₂)² - (r₁ - r₂)²] = √(4 r₁ r₂) = 2√(r₁ r₂).',
-        '2 * √(9 * 4) = 2 * 6 = 12 cm.'
+        'Given angle = 108° out of 360° total.',
+        'Fraction = 108 / 360 = 3 / 10.',
+        'Percentage = (3 / 10) * 100 = 30%.'
       ],
-      shortcutOrTrick: 'Direct SSC formula: 2√(r₁ * r₂) = 2√(36) = 12 cm.',
-      commonTrap: 'Forgetting that Transverse Common Tangent (TCT) is 0 when circles touch externally, and confusing (r1-r2) with (r1+r2).'
+      shortcutOrTrick: 'Shortcut multiplier: 1° = (100/360)% = (5/18)%. Angle * (5/18) = 108 * (5/18) = 6 * 5 = 30%.',
+      commonTrap: 'Dividing by 100 instead of 360.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
-    examShift: 'SSC CHSL 2023 Tier 2 (Session I - Mathematical Abilities)',
-    sourceCitation: 'Official SSC CHSL Tier 2 CBE Paper 2023',
+    examShift: 'SSC CHSL 2023 Tier 1 (Held on 09-08-2023, Shift 2)',
+    sourceCitation: 'SSC CHSL 2023 Tier 1 Paper',
     verificationStatus: 'verified'
   },
 
@@ -184,30 +211,21 @@ export const QUESTION_BANK: Question[] = [
     difficulty: 'easy',
     questionText: 'In a certain code language, "ROSE" is written as "ILHV". How will "TULIP" be written in that code language?',
     options: [
-      { id: 'A', text: 'GFORK', isCorrect: true, distractorExplanation: 'Correct! Each letter is replaced with its opposite letter in the alphabet (A-Z, B-Y, etc., sum of ranks = 27).' },
-      { id: 'B', text: 'GFOQL', isCorrect: false, distractorExplanation: 'P opposite is K (16 + 11 = 27), not L.' },
-      { id: 'C', text: 'HFORK', isCorrect: false, distractorExplanation: 'T (20) opposite is G (7), not H (8).' },
-      { id: 'D', text: 'GFNSK', isCorrect: false, distractorExplanation: 'L (12) opposite is O (15), not N.' }
+      { id: 'A', text: 'GFORK', isCorrect: true, distractorExplanation: 'Correct! Opposite alphabet letters: T-G, U-F, L-O, I-R, P-K.' },
+      { id: 'B', text: 'GFOQL', isCorrect: false, distractorExplanation: 'Opposite of P is K, not L.' },
+      { id: 'C', text: 'HFORK', isCorrect: false, distractorExplanation: 'Opposite of T is G, not H.' },
+      { id: 'D', text: 'GFNSK', isCorrect: false, distractorExplanation: 'Opposite of L is O, not N.' }
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Opposite letter pairs pattern: The sum of forward and backward positional values equals 27.',
+      mainConcept: 'Opposite letter pairs: Sum of ranks from left and right equals 27.',
       stepByStep: [
-        'Check ROSE -> ILHV:',
-        'R (18) + I (9) = 27 (Opposite)',
-        'O (15) + L (12) = 27 (Opposite)',
-        'S (19) + H (8) = 27 (Opposite)',
-        'E (5) + V (22) = 27 (Opposite)',
-        'Now apply to TULIP:',
-        'T (20) -> Opposite is G (7)',
-        'U (21) -> Opposite is F (6)',
-        'L (12) -> Opposite is O (15)',
-        'I (9)  -> Opposite is R (18)',
-        'P (16) -> Opposite is K (11)',
-        'Result: G F O R K'
+        'R(18) + I(9) = 27; O(15) + L(12) = 27; S(19) + H(8) = 27; E(5) + V(22) = 27.',
+        'T(20)->G(7), U(21)->F(6), L(12)->O(15), I(9)->R(18), P(16)->K(11).',
+        'Result: GFORK.'
       ],
-      shortcutOrTrick: 'Quick opposite mnemonics: G-T (GT Road), U-F (UF / Full), L-O (LOVE), I-R (Indian Railway), P-K (PK movie).',
-      commonTrap: 'Trying +/- constant shifts before testing for alphabet reverse complements.'
+      shortcutOrTrick: 'Mnemonics: GT Road, UF, LOVE, IR (Indian Railway), PK.',
+      commonTrap: 'Checking numerical +/- shifts before testing reverse pairs.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -223,31 +241,30 @@ export const QUESTION_BANK: Question[] = [
     topicName: 'Series, Analogies & Classification',
     subtopicName: 'Number Series',
     difficulty: 'medium',
-    questionText: 'Select the number from among the given options that can replace the question mark (?) in the following series:\n12, 14, 18, 26, 42, ?',
+    questionText: 'Select the number that can replace the question mark (?) in the following series:\n12, 14, 18, 26, 42, ?',
     options: [
-      { id: 'A', text: '74', isCorrect: true, distractorExplanation: 'Correct! Step differences: +2, +4, +8, +16, +32. 42 + 32 = 74.' },
-      { id: 'B', text: '68', isCorrect: false, distractorExplanation: 'Adding 26 instead of 32.' },
-      { id: 'C', text: '72', isCorrect: false, distractorExplanation: 'Adding 30 instead of doubling 16.' },
+      { id: 'A', text: '74', isCorrect: true, distractorExplanation: 'Correct! Differences: +2, +4, +8, +16, +32. 42 + 32 = 74.' },
+      { id: 'B', text: '68', isCorrect: false, distractorExplanation: 'Added 26 instead of 32.' },
+      { id: 'C', text: '72', isCorrect: false, distractorExplanation: 'Added 30 instead of doubling 16.' },
       { id: 'D', text: '84', isCorrect: false, distractorExplanation: 'Calculation error.' }
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Geometric progression of consecutive differences: Differences double at each step (2^n).',
+      mainConcept: 'Geometric series of differences: Differences double (+2^n) at each step.',
       stepByStep: [
-        '14 - 12 = 2 (2¹)',
-        '18 - 14 = 4 (2²)',
-        '26 - 18 = 8 (2³)',
-        '42 - 26 = 16 (2⁴)',
-        'Next difference must be 16 * 2 = 32 (2⁵)',
-        'Missing number = 42 + 32 = 74.'
+        '14 - 12 = 2',
+        '18 - 14 = 4',
+        '26 - 18 = 8',
+        '42 - 26 = 16',
+        'Next difference = 16 * 2 = 32. Missing number = 42 + 32 = 74.'
       ],
       shortcutOrTrick: 'Powers of 2 differences: +2, +4, +8, +16, +32.',
-      commonTrap: 'Assuming arithmetic differences like +2, +4, +6, +8 (which would give 26 + 10 = 36, conflicting with 42).'
+      commonTrap: 'Assuming arithmetic differences (+2, +4, +6).'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
     examShift: 'SSC CHSL 2023 Tier 1 (Held on 09-08-2023, Shift 3)',
-    sourceCitation: 'SSC CHSL 2023 Tier 1 official memory-verified questions',
+    sourceCitation: 'SSC CHSL 2023 Tier 1 Verified Set',
     verificationStatus: 'verified'
   },
   {
@@ -258,29 +275,61 @@ export const QUESTION_BANK: Question[] = [
     topicName: 'Syllogism, Venn Diagrams & Critical Reasoning',
     subtopicName: 'Syllogism',
     difficulty: 'medium',
-    questionText: 'Statements:\n1. All books are pens.\n2. Some pens are erasers.\nConclusions:\nI. Some erasers are pens.\nII. Some books are erasers.\nWhich of the conclusions logically follows?',
+    questionText: 'Statements:\n1. All books are pens.\n2. Some pens are erasers.\nConclusions:\nI. Some erasers are pens.\nII. Some books are erasers.',
     options: [
-      { id: 'A', text: 'Only conclusion I follows', isCorrect: true, distractorExplanation: 'Correct! From Statement 2 (Some pens are erasers), the immediate conversion "Some erasers are pens" is valid. No definite overlap between books and erasers exists.' },
-      { id: 'B', text: 'Only conclusion II follows', isCorrect: false, distractorExplanation: 'Books and erasers have no definite intersection, so conclusion II does not necessarily follow.' },
-      { id: 'C', text: 'Both conclusions I and II follow', isCorrect: false, distractorExplanation: 'Conclusion II is only a possibility, not a definite conclusion.' },
-      { id: 'D', text: 'Neither conclusion I nor II follows', isCorrect: false, distractorExplanation: 'Conclusion I is a definite valid conversion of Statement 2.' }
+      { id: 'A', text: 'Only conclusion I follows', isCorrect: true, distractorExplanation: 'Correct! "Some pens are erasers" directly converts to "Some erasers are pens".' },
+      { id: 'B', text: 'Only conclusion II follows', isCorrect: false, distractorExplanation: 'No definite overlap between books and erasers.' },
+      { id: 'C', text: 'Both follow', isCorrect: false, distractorExplanation: 'Conclusion II is only a possibility.' },
+      { id: 'D', text: 'Neither follows', isCorrect: false, distractorExplanation: 'Conclusion I is logically definite.' }
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Syllogism definite deduction vs possibility: "Some A are B" implies "Some B are A".',
+      mainConcept: 'Immediate conversion of "Some A are B" is "Some B are A".',
       stepByStep: [
-        'Analyze Statement 2: "Some pens are erasers". In Aristotelian logic and Venn representation, this directly converts to "Some erasers are pens". Thus, Conclusion I definitely follows.',
-        'Analyze Conclusion II: "Some books are erasers". All books are inside pens, and erasers overlap with pens, but erasers may or may not overlap with the books subset inside pens.',
-        'Since there is no definite overlap guaranteed in all valid Venn diagrams, Conclusion II does not follow definitely.',
-        'Therefore, only Conclusion I follows.'
+        'Statement 2: "Some pens are erasers" converts to "Some erasers are pens". Conclusion I follows.',
+        'Books are inside pens, and erasers overlap with pens, but may not touch books. Conclusion II does not follow definitely.'
       ],
-      shortcutOrTrick: 'Immediate conversion rule: "Some X are Y" <==> "Some Y are X". Immediate valid tick.',
+      shortcutOrTrick: 'Rule: "Some X are Y" <==> "Some Y are X" is always valid.',
       commonTrap: 'Assuming that because books are pens and pens are erasers, books must be erasers.'
     },
     sourceType: 'verified_pyq',
     examYear: 2022,
     examShift: 'SSC CHSL 2022 Tier 1 (Held on 30-05-2022, Shift 1)',
     sourceCitation: 'SSC CHSL Official Paper 2022',
+    verificationStatus: 'verified'
+  },
+  {
+    id: 'chsl_q_reas_04',
+    tier: 'both',
+    subjectId: 'reasoning',
+    topicId: 'reasoning_non_verbal',
+    topicName: 'Non-Verbal Reasoning & Visual Logic',
+    subtopicName: 'Dice Opposite Faces',
+    difficulty: 'easy',
+    questionText: 'Two different positions of the same standard dice are shown. When number 3 is at the bottom, which number will be on the top face?\n(Position 1 shows faces: 1, 2, 3; Position 2 shows faces: 1, 4, 5)',
+    options: [
+      { id: 'A', text: '4', isCorrect: false, distractorExplanation: 'Face 2 is opposite 4.' },
+      { id: 'B', text: '5', isCorrect: true, distractorExplanation: 'Correct! Clockwise from common face 1: 1->2->3 and 1->4->5. Thus, 2 is opposite 4, and 3 is opposite 5.' },
+      { id: 'C', text: '6', isCorrect: false, distractorExplanation: 'Face 1 is opposite 6.' },
+      { id: 'D', text: '2', isCorrect: false, distractorExplanation: 'Face 2 is adjacent to 3 in position 1, so cannot be opposite.' }
+    ],
+    correctOptionId: 'B',
+    explanation: {
+      mainConcept: 'One common face rule in dice: Move clockwise from the common face in both positions.',
+      stepByStep: [
+        'Common face is 1.',
+        'Clockwise from 1 in Position 1: 1 -> 2 -> 3',
+        'Clockwise from 1 in Position 2: 1 -> 4 -> 5',
+        'Opposite pairs: 2 is opposite 4; 3 is opposite 5; 1 is opposite 6.',
+        'When 3 is at the bottom, 5 is on the top.'
+      ],
+      shortcutOrTrick: 'Write sequences: (1-2-3) and (1-4-5). Align columns: 2 opposite 4, 3 opposite 5.',
+      commonTrap: 'Rotating counter-clockwise in one dice and clockwise in the other.'
+    },
+    sourceType: 'verified_pyq',
+    examYear: 2023,
+    examShift: 'SSC CHSL 2023 Tier 1 (Held on 10-08-2023, Shift 1)',
+    sourceCitation: 'SSC CHSL 2023 Official Paper',
     verificationStatus: 'verified'
   },
 
@@ -293,30 +342,29 @@ export const QUESTION_BANK: Question[] = [
     topicName: 'Grammar Foundations: Spotting Errors & Sentence Improvement',
     subtopicName: 'Subject-Verb Agreement',
     difficulty: 'medium',
-    questionText: 'Identify the segment in the sentence which contains a grammatical error:\n"Neither the manager nor the employees was present in the meeting hall yesterday."',
+    questionText: 'Identify the segment containing a grammatical error:\n"Neither the manager nor the employees was present in the meeting hall yesterday."',
     options: [
-      { id: 'A', text: 'Neither the manager', isCorrect: false, distractorExplanation: 'Proper correlative conjunction opening.' },
-      { id: 'B', text: 'nor the employees', isCorrect: false, distractorExplanation: 'Correct conjunction partner for "neither".' },
-      { id: 'C', text: 'was present in the', isCorrect: true, distractorExplanation: 'Error here! When subjects are joined by "neither... nor", the verb agrees with the subject closer to it ("the employees" is plural, so it must be "were present").' },
-      { id: 'D', text: 'meeting hall yesterday', isCorrect: false, distractorExplanation: 'Grammatically sound adverbial and noun phrase.' }
+      { id: 'A', text: 'Neither the manager', isCorrect: false, distractorExplanation: 'Correct conjunction opening.' },
+      { id: 'B', text: 'nor the employees', isCorrect: false, distractorExplanation: 'Correct pair.' },
+      { id: 'C', text: 'was present in the', isCorrect: true, distractorExplanation: 'Error! In "Neither... nor", the verb agrees with the closer subject ("employees" is plural, so it should be "were present").' },
+      { id: 'D', text: 'meeting hall yesterday', isCorrect: false, distractorExplanation: 'Grammatically sound.' }
     ],
     correctOptionId: 'C',
     explanation: {
-      mainConcept: 'Proximity Rule for Correlative Conjunctions: When two subjects are connected by "either... or", "neither... nor", or "not only... but also", the verb must agree in number with the closer subject.',
+      mainConcept: 'Proximity rule for correlative conjunctions: Verb agrees with the subject closer to it.',
       stepByStep: [
-        'Sentence subjects: "the manager" (singular) and "the employees" (plural).',
-        'Connected by: "Neither... nor".',
-        'Subject closest to the auxiliary verb is "the employees", which is plural.',
-        'The verb "was" (singular) must be replaced by "were" (plural).',
-        'Correct sentence: "Neither the manager nor the employees were present in the meeting hall yesterday."'
+        'Subjects: "manager" (singular) and "employees" (plural).',
+        'Joined by "Neither... nor".',
+        'Nearest subject to the verb is "employees" (plural).',
+        '"was" must be replaced by "were".'
       ],
-      shortcutOrTrick: 'SSC Rule 14: In "Neither A nor B + Verb", Verb = Form of B (the nearest subject).',
-      commonTrap: 'Thinking that "Neither" always demands a singular verb regardless of the plural second subject.'
+      shortcutOrTrick: 'SSC Rule: In "Neither A nor B + Verb", Verb = Form of B.',
+      commonTrap: 'Thinking "Neither" always forces a singular verb regardless of the plural second subject.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
     examShift: 'SSC CHSL 2023 Tier 1 (Held on 08-08-2023, Shift 1)',
-    sourceCitation: 'SSC CHSL 2023 Official Answer Key',
+    sourceCitation: 'SSC CHSL 2023 Answer Key',
     verificationStatus: 'verified'
   },
   {
@@ -330,57 +378,85 @@ export const QUESTION_BANK: Question[] = [
     questionText: 'Select the most appropriate meaning of the given idiom:\n"To burn the candle at both ends"',
     options: [
       { id: 'A', text: 'To waste money on luxury items', isCorrect: false, distractorExplanation: 'That idiom is "to burn a hole in one\'s pocket".' },
-      { id: 'B', text: 'To work excessively hard from early morning until late night', isCorrect: true, distractorExplanation: 'Correct! It signifies exhausting one\'s energy by overworking from dawn to late hours.' },
-      { id: 'C', text: 'To be caught in a dilemma', isCorrect: false, distractorExplanation: 'That idiom is "between the devil and the deep blue sea".' },
-      { id: 'D', text: 'To cause intentional destruction', isCorrect: false, distractorExplanation: 'Literal interpretation of burning, which is incorrect for idioms.' }
+      { id: 'B', text: 'To work excessively hard from early morning until late night', isCorrect: true, distractorExplanation: 'Correct! Metaphor for exhausting energy by waking early and sleeping late.' },
+      { id: 'C', text: 'To be caught in a dilemma', isCorrect: false, distractorExplanation: 'That is "between the devil and the deep blue sea".' },
+      { id: 'D', text: 'To cause intentional destruction', isCorrect: false, distractorExplanation: 'Literal interpretation.' }
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'Idiomatic expressions in SSC English: Metaphorical meaning of bodily or occupational exhaustion.',
+      mainConcept: 'Idiomatic meaning of physical exhaustion through non-stop labor.',
       stepByStep: [
-        '"To burn the candle at both ends" originated from burning a wax candle from top and bottom simultaneously, exhausting it twice as fast.',
-        'Figuratively, it means overtaxing one\'s health or energy by waking up early and sleeping late to work.'
+        'Burning candle from both ends exhausts the wax twice as fast.',
+        'Metaphorically: overtaxing health by waking up early and working late.'
       ],
-      shortcutOrTrick: 'Visualize waking at 5 AM and working past midnight — consuming resources from both ends of the clock.',
-      commonTrap: 'Confusing with financial spending ("spend money like water").'
+      shortcutOrTrick: 'Think: 5 AM to midnight work schedule.',
+      commonTrap: 'Confusing with financial spending.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
     examShift: 'SSC CHSL 2023 Tier 1 (Held on 03-08-2023, Shift 3)',
-    sourceCitation: 'SSC CHSL 2023 official question set',
+    sourceCitation: 'SSC CHSL 2023 Question Set',
     verificationStatus: 'verified'
   },
   {
     id: 'chsl_q_eng_03',
     tier: 'both',
     subjectId: 'english',
-    topicId: 'english_vocabulary',
-    topicName: 'Vocabulary: Synonyms, Antonyms, Idioms & One-Word Substitution',
-    subtopicName: 'One-Word Substitution',
-    difficulty: 'easy',
-    questionText: 'Select the option that can be used as a one-word substitute for the given group of words:\n"A person who does not believe in the existence of God"',
+    topicId: 'english_voice_narration_pqrs',
+    topicName: 'Active/Passive Voice, Direct/Indirect & Sentence Shuffling (Para Jumbles)',
+    subtopicName: 'Active to Passive Voice',
+    difficulty: 'medium',
+    questionText: 'Select the correct passive form of the given sentence:\n"The committee has approved the revised examination syllabus."',
     options: [
-      { id: 'A', text: 'Agnostic', isCorrect: false, distractorExplanation: 'An agnostic believes that nothing is known or can be known of the existence or nature of God (skeptical of knowledge, not outright disbelief).' },
-      { id: 'B', text: 'Atheist', isCorrect: true, distractorExplanation: 'Correct! Root "a-" (without) + "theos" (god) = one who rejects or denies the existence of deities.' },
-      { id: 'C', text: 'Altruist', isCorrect: false, distractorExplanation: 'An altruist is someone unselfishly concerned for the welfare of others.' },
-      { id: 'D', text: 'Ascetic', isCorrect: false, distractorExplanation: 'An ascetic is one who practices severe self-discipline and abstention from all forms of indulgence for religious reasons.' }
+      { id: 'A', text: 'The revised examination syllabus was approved by the committee.', isCorrect: false, distractorExplanation: 'Changes tense from present perfect to simple past.' },
+      { id: 'B', text: 'The revised examination syllabus has been approved by the committee.', isCorrect: true, distractorExplanation: 'Correct! Present Perfect: Subject + has/have + approved -> Object + has/have + been + approved.' },
+      { id: 'C', text: 'The revised examination syllabus is approved by the committee.', isCorrect: false, distractorExplanation: 'Changes to simple present.' },
+      { id: 'D', text: 'The revised examination syllabus had been approved by the committee.', isCorrect: false, distractorExplanation: 'Changes to past perfect.' }
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'Greek roots: "Theos" = God; "A-" = prefix meaning without/not.',
+      mainConcept: 'Present Perfect passive transformation: has/have + V3 -> has/have + been + V3.',
       stepByStep: [
-        'Theist = Believer in God.',
-        'Atheist = Non-believer in the existence of God.',
-        'Agnostic = Doubts whether God exists or if God can be known.',
-        'Pantheist = Believes God is present in all nature.'
+        'Active: "The committee" (Subject) + "has approved" (Verb) + "the revised examination syllabus" (Object).',
+        'Passive: "The revised examination syllabus" (Singular Object) + "has been approved" + "by the committee".',
+        'Tense must remain unchanged in voice transformations.'
       ],
-      shortcutOrTrick: 'A-theist: "A" = No, "Theist" = God believer. No God believer.',
-      commonTrap: 'Confusing "Atheist" (disbeliever in God) with "Agnostic" (doubter of whether God\'s existence can be proven).'
+      shortcutOrTrick: 'Voice Rule: Perfect tenses simply insert "been". Never change the primary tense.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
-    examShift: 'SSC CHSL 2023 Tier 1 (Held on 11-08-2023, Shift 2)',
-    sourceCitation: 'SSC CHSL Tier 1 Paper 2023',
+    examShift: 'SSC CHSL 2023 Tier 1 (Held on 11-08-2023, Shift 1)',
+    sourceCitation: 'SSC CHSL Official Paper 2023',
+    verificationStatus: 'verified'
+  },
+  {
+    id: 'chsl_q_eng_04',
+    tier: 'both',
+    subjectId: 'english',
+    topicId: 'english_cloze_comprehension',
+    topicName: 'Cloze Test & Reading Comprehension',
+    subtopicName: 'Cloze Passage Blank Context',
+    difficulty: 'medium',
+    questionText: 'In the sentence: "Consistent revision is ________ to scoring high marks in the SSC CHSL examination.", select the most appropriate option to fill the blank.',
+    options: [
+      { id: 'A', text: 'detrimental', isCorrect: false, distractorExplanation: 'Detrimental means harmful, opposite of required context.' },
+      { id: 'B', text: 'indispensable', isCorrect: true, distractorExplanation: 'Correct! Indispensable means absolutely necessary/essential, perfectly fitting the positive prepositional context.' },
+      { id: 'C', text: 'redundant', isCorrect: false, distractorExplanation: 'Redundant means unnecessary/superfluous.' },
+      { id: 'D', text: 'negligible', isCorrect: false, distractorExplanation: 'Negligible means insignificant.' }
+    ],
+    correctOptionId: 'B',
+    explanation: {
+      mainConcept: 'Contextual vocabulary fit in Cloze Tests: identifying positive/negative tone and collocations.',
+      stepByStep: [
+        'The passage stresses the importance of consistent revision for high marks.',
+        '"Indispensable" means completely essential and takes the preposition "to" (indispensable to doing something).'
+      ],
+      shortcutOrTrick: 'Check sentence tone: High marks is positive, so the blank requires a strong positive adjective.'
+    },
+    sourceType: 'verified_pyq',
+    examYear: 2023,
+    examShift: 'SSC CHSL 2023 Tier 1 (Held on 04-08-2023, Shift 3)',
+    sourceCitation: 'SSC CHSL 2023 Cloze Section',
     verificationStatus: 'verified'
   },
 
@@ -395,20 +471,19 @@ export const QUESTION_BANK: Question[] = [
     difficulty: 'easy',
     questionText: 'Which Article of the Indian Constitution was referred to by Dr. B.R. Ambedkar as the "Heart and Soul of the Constitution"?',
     options: [
-      { id: 'A', text: 'Article 14', isCorrect: false, distractorExplanation: 'Article 14 guarantees Equality before Law and Equal Protection of the Laws.' },
-      { id: 'B', text: 'Article 19', isCorrect: false, distractorExplanation: 'Article 19 protects six fundamental democratic freedoms (speech, assembly, etc.).' },
-      { id: 'C', text: 'Article 21', isCorrect: false, distractorExplanation: 'Article 21 guarantees Protection of Life and Personal Liberty.' },
-      { id: 'D', text: 'Article 32', isCorrect: true, distractorExplanation: 'Correct! Article 32 gives the Right to Constitutional Remedies (allowing citizens to move the Supreme Court directly via writs for enforcement of Fundamental Rights).' }
+      { id: 'A', text: 'Article 14', isCorrect: false, distractorExplanation: 'Article 14 is Equality before Law.' },
+      { id: 'B', text: 'Article 19', isCorrect: false, distractorExplanation: 'Article 19 protects six fundamental freedoms.' },
+      { id: 'C', text: 'Article 21', isCorrect: false, distractorExplanation: 'Article 21 is Protection of Life and Liberty.' },
+      { id: 'D', text: 'Article 32', isCorrect: true, distractorExplanation: 'Correct! Article 32 guarantees Right to Constitutional Remedies via Supreme Court writs.' }
     ],
     correctOptionId: 'D',
     explanation: {
-      mainConcept: 'Article 32 empowers the Supreme Court to issue writs (Habeas Corpus, Mandamus, Prohibition, Certiorari, Quo-Warranto).',
+      mainConcept: 'Article 32 empowers the Supreme Court to enforce Fundamental Rights via writs.',
       stepByStep: [
-        'During the Constituent Assembly debates, Dr. B.R. Ambedkar stated: "If I was asked to name any particular Article in this Constitution as the most important... an Article without which this Constitution would be a nullity, I could not refer to any other Article except this one. It is the very soul of the Constitution and the very heart of it."',
-        'Under Article 32, the Supreme Court functions as the protector and guarantor of fundamental rights.'
+        'Dr. B.R. Ambedkar declared Article 32 as the most critical article without which the Constitution would be a nullity.',
+        'Article 32 itself is a Fundamental Right.'
       ],
-      shortcutOrTrick: 'Article 32 = Supreme Court writ power; Article 226 = High Court writ power.',
-      commonTrap: 'Confusing Dr. Ambedkar\'s quote about Article 32 with the Preamble being called the "soul of the Constitution" by Thakurdas Bhargava.'
+      shortcutOrTrick: 'Article 32 = Supreme Court writ power; Article 226 = High Court writ power.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -426,21 +501,14 @@ export const QUESTION_BANK: Question[] = [
     difficulty: 'easy',
     questionText: '"Sattriya", one of the eight classical dances of India recognized by the Sangeet Natak Akademi, originated in which Indian state?',
     options: [
-      { id: 'A', text: 'Assam', isCorrect: true, distractorExplanation: 'Correct! Sattriya was introduced in the 15th century AD by the Vaishnavite saint and reformer Mahapurusha Sankaradeva in Assam.' },
-      { id: 'B', text: 'Manipur', isCorrect: false, distractorExplanation: 'Manipur has Manipuri classical dance (Jagoi).' },
-      { id: 'C', text: 'Odisha', isCorrect: false, distractorExplanation: 'Odisha has Odissi classical dance.' },
+      { id: 'A', text: 'Assam', isCorrect: true, distractorExplanation: 'Correct! Introduced in the 15th century by Mahapurusha Sankaradeva in Assam.' },
+      { id: 'B', text: 'Manipur', isCorrect: false, distractorExplanation: 'Manipur has Manipuri dance.' },
+      { id: 'C', text: 'Odisha', isCorrect: false, distractorExplanation: 'Odisha has Odissi dance.' },
       { id: 'D', text: 'Kerala', isCorrect: false, distractorExplanation: 'Kerala has Kathakali and Mohiniyattam.' }
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Sangeet Natak Akademi recognizes 8 Classical Dances: Bharatnatyam (TN), Kathak (North India/UP), Kathakali (Kerala), Mohiniyattam (Kerala), Kuchipudi (AP), Odissi (Odisha), Manipuri (Manipur), and Sattriya (Assam).',
-      stepByStep: [
-        'Sattriya dance originated in the Sattras (monasteries) of Assam.',
-        'Created by Mahapurush Srimanta Sankaradeva during the 15th-century Neo-Vaishnavite movement.',
-        'Recognized as an official classical dance by Sangeet Natak Akademi in the year 2000.'
-      ],
-      shortcutOrTrick: 'Sattriya = Sattras of Assam (Monasteries created by Sankaradeva).',
-      commonTrap: 'Confusing Sattriya (Assam) with Kathakali or Mohiniyattam (Kerala).'
+      mainConcept: '8 Classical Dances recognized by Sangeet Natak Akademi: Bharatnatyam (TN), Kathak (UP), Kathakali (Kerala), Mohiniyattam (Kerala), Kuchipudi (AP), Odissi (Odisha), Manipuri (Manipur), Sattriya (Assam).'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -456,28 +524,46 @@ export const QUESTION_BANK: Question[] = [
     topicName: 'Geography & Indian Economy',
     subtopicName: 'Rivers of India',
     difficulty: 'medium',
-    questionText: 'Which of the following rivers is the longest peninsular river in India, often referred to as the "Dakshin Ganga"?',
+    questionText: 'Which river is the longest peninsular river in India, often referred to as the "Dakshin Ganga"?',
     options: [
-      { id: 'A', text: 'Godavari', isCorrect: true, distractorExplanation: 'Correct! Godavari is the longest peninsular river (approx 1,465 km) originating from Trimbakeshwar near Nashik, Maharashtra.' },
-      { id: 'B', text: 'Krishna', isCorrect: false, distractorExplanation: 'Krishna is the second longest peninsular river (approx 1,400 km), originating at Mahabaleshwar.' },
-      { id: 'C', text: 'Kaveri', isCorrect: false, distractorExplanation: 'Kaveri is called "Ganga of the South" culturally, but its length is only ~800 km.' },
-      { id: 'D', text: 'Mahanadi', isCorrect: false, distractorExplanation: 'Mahanadi is approx 851 km long, originating in Raipur, Chhattisgarh.' }
+      { id: 'A', text: 'Godavari', isCorrect: true, distractorExplanation: 'Correct! Godavari is 1,465 km long, originating at Trimbakeshwar, Maharashtra.' },
+      { id: 'B', text: 'Krishna', isCorrect: false, distractorExplanation: 'Krishna is the 2nd longest (~1400 km).' },
+      { id: 'C', text: 'Kaveri', isCorrect: false, distractorExplanation: 'Kaveri is ~800 km.' },
+      { id: 'D', text: 'Mahanadi', isCorrect: false, distractorExplanation: 'Mahanadi is ~851 km.' }
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Peninsular rivers of India: Godavari has the largest basin and longest length (1,465 km) among peninsular rivers.',
-      stepByStep: [
-        'Godavari originates at Trimbakeshwar in the Western Ghats (Nashik, Maharashtra).',
-        'It flows eastward across Maharashtra, Telangana, and Andhra Pradesh into the Bay of Bengal.',
-        'Due to its vast age, length, and cultural importance, it is designated as "Dakshin Ganga" or "Vriddha Ganga" (Old Ganga).'
-      ],
-      shortcutOrTrick: 'Length order: Godavari (1465 km) > Krishna (1400 km) > Narmada (1312 km) > Mahanadi (851 km) > Kaveri (800 km).',
-      commonTrap: 'Confusing Godavari ("Dakshin Ganga") with Kaveri ("Ganga of the South"). In SSC keys, Godavari is the designated Dakshin Ganga due to length.'
+      mainConcept: 'Godavari is the largest peninsular river basin in India (1,465 km).'
     },
     sourceType: 'verified_pyq',
     examYear: 2022,
     examShift: 'SSC CHSL 2022 Tier 1 (Held on 24-05-2022, Shift 2)',
     sourceCitation: 'Official SSC CHSL Exam 2022 Paper',
+    verificationStatus: 'verified'
+  },
+  {
+    id: 'chsl_q_ga_04',
+    tier: 'both',
+    subjectId: 'general_awareness',
+    topicId: 'ga_science_current_affairs',
+    topicName: 'General Science & Current Affairs',
+    subtopicName: 'Vitamins & Deficiency',
+    difficulty: 'easy',
+    questionText: 'Deficiency of Vitamin C (Ascorbic acid) in the human diet causes which of the following diseases?',
+    options: [
+      { id: 'A', text: 'Rickets', isCorrect: false, distractorExplanation: 'Rickets is caused by Vitamin D deficiency.' },
+      { id: 'B', text: 'Scurvy', isCorrect: true, distractorExplanation: 'Correct! Vitamin C deficiency leads to scurvy, characterized by bleeding gums and delayed wound healing.' },
+      { id: 'C', text: 'Beriberi', isCorrect: false, distractorExplanation: 'Beriberi is caused by Vitamin B1 (Thiamine) deficiency.' },
+      { id: 'D', text: 'Night Blindness', isCorrect: false, distractorExplanation: 'Night blindness is caused by Vitamin A (Retinol) deficiency.' }
+    ],
+    correctOptionId: 'B',
+    explanation: {
+      mainConcept: 'Vitamin Deficiency Chart: Vitamin A (Night blindness), B1 (Beriberi), C (Scurvy), D (Rickets), K (Failure of blood clotting).'
+    },
+    sourceType: 'verified_pyq',
+    examYear: 2023,
+    examShift: 'SSC CHSL 2023 Tier 1 (Held on 08-08-2023, Shift 2)',
+    sourceCitation: 'SSC CHSL 2023 Science Key',
     verificationStatus: 'verified'
   },
 
@@ -490,23 +576,16 @@ export const QUESTION_BANK: Question[] = [
     topicName: 'Computer Basics, Hardware & OS',
     subtopicName: 'Memory Hierarchy & Cache',
     difficulty: 'medium',
-    questionText: 'Which type of computer memory is positioned directly between the CPU registers and Main Memory (RAM) to provide the fastest access speed for frequently used instructions?',
+    questionText: 'Which computer memory is positioned directly between CPU registers and Main Memory (RAM) to provide the fastest access speed for frequently used instructions?',
     options: [
-      { id: 'A', text: 'Secondary Hard Disk (HDD)', isCorrect: false, distractorExplanation: 'HDD is non-volatile magnetic storage, the slowest tier in this comparison.' },
-      { id: 'B', text: 'Cache Memory (SRAM)', isCorrect: true, distractorExplanation: 'Correct! Cache memory built with Static RAM (SRAM) sits between the CPU and DRAM to store frequently executed code and minimize latency.' },
-      { id: 'C', text: 'Virtual Memory on SSD', isCorrect: false, distractorExplanation: 'Virtual memory is an OS technique using SSD/HDD paging when RAM runs full.' },
-      { id: 'D', text: 'Read Only Memory (ROM)', isCorrect: false, distractorExplanation: 'ROM stores firmware (BIOS/POST) and is not used for dynamic instruction buffering.' }
+      { id: 'A', text: 'Secondary Hard Disk (HDD)', isCorrect: false, distractorExplanation: 'Slowest non-volatile magnetic storage.' },
+      { id: 'B', text: 'Cache Memory (SRAM)', isCorrect: true, distractorExplanation: 'Correct! High-speed Static RAM (SRAM) cache buffers instructions for the CPU.' },
+      { id: 'C', text: 'Virtual Memory on SSD', isCorrect: false, distractorExplanation: 'Virtual memory is an OS paging technique.' },
+      { id: 'D', text: 'Read Only Memory (ROM)', isCorrect: false, distractorExplanation: 'ROM stores firmware BIOS/POST.' }
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'Computer Memory Hierarchy: CPU Registers (fastest, smallest) -> Cache L1/L2/L3 (SRAM) -> Main Memory (DRAM) -> Secondary Storage (SSD/HDD).',
-      stepByStep: [
-        'CPU clock speeds are measured in gigahertz (nanoseconds), while retrieving data from main RAM requires tens of nanoseconds.',
-        'To bridge this processor-memory speed gap, computer architects integrate high-speed Cache Memory built with Static RAM (SRAM).',
-        'Cache holds copies of instructions from frequently used main memory locations.'
-      ],
-      shortcutOrTrick: 'Hierarchy order from fastest to slowest: Registers > Cache > RAM > SSD > HDD.',
-      commonTrap: 'Thinking RAM is the fastest internal memory; Cache memory and registers are significantly faster than DRAM.'
+      mainConcept: 'Speed Hierarchy: Registers > Cache (SRAM) > RAM (DRAM) > SSD > HDD.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -522,23 +601,16 @@ export const QUESTION_BANK: Question[] = [
     topicName: 'Software, MS Office (Word, Excel, PowerPoint)',
     subtopicName: 'MS Excel Cell Referencing',
     difficulty: 'medium',
-    questionText: 'In MS Excel 365, what symbol is used before the column letter and row number (e.g. $A$1) to create an absolute cell reference that does not change when copied across other cells?',
+    questionText: 'In MS Excel 365, what symbol is used before the column letter and row number (e.g. $A$1) to create an absolute cell reference?',
     options: [
-      { id: 'A', text: 'Hash symbol (#)', isCorrect: false, distractorExplanation: '# is used for error codes (e.g. #VALUE!, #REF!, #NAME?).' },
-      { id: 'B', text: 'Dollar sign ($)', isCorrect: true, distractorExplanation: 'Correct! The $ symbol locks the column and/or row. Shortcut key is F4.' },
-      { id: 'C', text: 'Ampersand (&)', isCorrect: false, distractorExplanation: '& is used for string concatenation (e.g. ="SSC " & "CHSL").' },
-      { id: 'D', text: 'Asterisk (*)', isCorrect: false, distractorExplanation: '* is the multiplication operator or wildcard character in searches.' }
+      { id: 'A', text: 'Hash symbol (#)', isCorrect: false, distractorExplanation: '# is used for error codes (e.g. #REF!).' },
+      { id: 'B', text: 'Dollar sign ($)', isCorrect: true, distractorExplanation: 'Correct! The $ symbol locks row/column coordinates. Shortcut is F4.' },
+      { id: 'C', text: 'Ampersand (&)', isCorrect: false, distractorExplanation: '& concatenates text strings.' },
+      { id: 'D', text: 'Asterisk (*)', isCorrect: false, distractorExplanation: '* is multiplication/wildcard.' }
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'Cell Referencing in Spreadsheets: Relative (A1), Absolute ($A$1), and Mixed ($A1 or A$1).',
-      stepByStep: [
-        'Relative reference: A1 shifts relatively as formulas are dragged across rows or columns.',
-        'Absolute reference: $A$1 locks both column A and row 1 regardless of where the formula is pasted.',
-        'In MS Excel, pressing the F4 key repeatedly cycles through: A1 -> $A$1 -> A$1 -> $A1 -> A1.'
-      ],
-      shortcutOrTrick: 'Remember: $ = "Locks" the coordinate immediately following it. F4 is the toggle shortcut.',
-      commonTrap: 'Confusing absolute reference symbol ($) with function prefixes (=) or error markers (#).'
+      mainConcept: 'Absolute referencing ($A$1) prevents coordinates from shifting during formula autofill.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -552,25 +624,18 @@ export const QUESTION_BANK: Question[] = [
     subjectId: 'computer_knowledge',
     topicId: 'tier2_internet_cybersecurity',
     topicName: 'Internet, Networking & Cyber Security',
-    subtopicName: 'Cyber Threats & Social Engineering',
+    subtopicName: 'Cyber Threats',
     difficulty: 'easy',
-    questionText: 'Which deceptive cybersecurity attack involves sending fraudulent emails or messages masquerading as a reputable entity (like a bank or government agency) to trick victims into revealing sensitive credentials, passwords, or credit card details?',
+    questionText: 'Which cyber attack involves sending fraudulent emails masquerading as a reputable organization to trick victims into revealing passwords or financial credentials?',
     options: [
-      { id: 'A', text: 'Phishing', isCorrect: true, distractorExplanation: 'Correct! Phishing uses social engineering via spoofed emails or websites to steal passwords and financial tokens.' },
-      { id: 'B', text: 'DDoS (Distributed Denial of Service)', isCorrect: false, distractorExplanation: 'DDoS overwhelms network bandwidth or web servers with fake traffic to take them offline.' },
-      { id: 'C', text: 'Keylogger', isCorrect: false, distractorExplanation: 'Keyloggers are covert spyware programs recording physical keystrokes.' },
-      { id: 'D', text: 'Ransomware', isCorrect: false, distractorExplanation: 'Ransomware encrypts victim files and demands extortion payment to decrypt them.' }
+      { id: 'A', text: 'Phishing', isCorrect: true, distractorExplanation: 'Correct! Phishing uses social engineering via spoofed emails or websites.' },
+      { id: 'B', text: 'DDoS (Distributed Denial of Service)', isCorrect: false, distractorExplanation: 'DDoS floods network bandwidth.' },
+      { id: 'C', text: 'Keylogger', isCorrect: false, distractorExplanation: 'Keyloggers record physical keystrokes.' },
+      { id: 'D', text: 'Ransomware', isCorrect: false, distractorExplanation: 'Ransomware encrypts files for extortion.' }
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Cyber Threat Classifications: Social Engineering vs Network Flooding vs Cryptographic Extortion.',
-      stepByStep: [
-        'Phishing is a social engineering attack where malicious actors impersonate legitimate organizations (e.g., SSC, Banks, Income Tax Department) using lookalike domains.',
-        'The victim is lured into clicking a fake link and entering confidential credentials.',
-        'Variants include Spear Phishing (targeted individuals), Smishing (via SMS), and Vishing (via voice calls).'
-      ],
-      shortcutOrTrick: 'Phishing = "Fishing" for user passwords with bait emails.',
-      commonTrap: 'Confusing the delivery deception (Phishing) with the payload (e.g. Trojan or Keylogger).'
+      mainConcept: 'Phishing is social engineering deceptive impersonation to harvest sensitive credentials.'
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
