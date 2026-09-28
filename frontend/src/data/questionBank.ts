@@ -508,7 +508,12 @@ export const QUESTION_BANK: Question[] = [
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: '8 Classical Dances recognized by Sangeet Natak Akademi: Bharatnatyam (TN), Kathak (UP), Kathakali (Kerala), Mohiniyattam (Kerala), Kuchipudi (AP), Odissi (Odisha), Manipuri (Manipur), Sattriya (Assam).'
+      mainConcept: '8 Classical Dances recognized by Sangeet Natak Akademi: Bharatnatyam (TN), Kathak (UP), Kathakali (Kerala), Mohiniyattam (Kerala), Kuchipudi (AP), Odissi (Odisha), Manipuri (Manipur), Sattriya (Assam).',
+      stepByStep: [
+        'Identify the classical dance in question: Sattriya.',
+        'Sattriya was introduced in the 15th century CE by Vaishnavite saint Srimanta Sankardev in the monasteries (Satras) of Assam.',
+        'Sangeet Natak Akademi officially recognized Sattriya as a classical dance in the year 2000.'
+      ]
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -533,7 +538,12 @@ export const QUESTION_BANK: Question[] = [
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Godavari is the largest peninsular river basin in India (1,465 km).'
+      mainConcept: 'Godavari is the largest peninsular river basin in India (1,465 km).',
+      stepByStep: [
+        'Recall peninsular river lengths: Godavari (1465 km), Krishna (1400 km), Mahanadi (851 km), Narmada (1312 km), Kaveri (800 km).',
+        'Godavari is the longest among all peninsular rivers.',
+        'Due to its age and length, it is known as Dakshin Ganga (or Vridha Ganga).'
+      ]
     },
     sourceType: 'verified_pyq',
     examYear: 2022,
@@ -558,7 +568,12 @@ export const QUESTION_BANK: Question[] = [
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'Vitamin Deficiency Chart: Vitamin A (Night blindness), B1 (Beriberi), C (Scurvy), D (Rickets), K (Failure of blood clotting).'
+      mainConcept: 'Vitamin Deficiency Chart: Vitamin A (Night blindness), B1 (Beriberi), C (Scurvy), D (Rickets), K (Failure of blood clotting).',
+      stepByStep: [
+        'Recall common vitamin deficiency diseases: Vitamin C = Ascorbic acid.',
+        'Deficiency leads to Scurvy (swollen bleeding gums, skin spots, fatigue).',
+        'Eliminate options: Vitamin D causes Rickets, B1 causes Beriberi, Vitamin A causes Night Blindness.'
+      ]
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -585,7 +600,13 @@ export const QUESTION_BANK: Question[] = [
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'Speed Hierarchy: Registers > Cache (SRAM) > RAM (DRAM) > SSD > HDD.'
+      mainConcept: 'Speed Hierarchy: Registers > Cache (SRAM) > RAM (DRAM) > SSD > HDD.',
+      stepByStep: [
+        'Analyze computer memory hierarchy.',
+        'Registers reside directly inside CPU cores (fastest).',
+        'Cache memory (L1, L2, L3 SRAM) buffers data between registers and main memory (RAM).',
+        'Main RAM (DRAM) is slower, followed by secondary storage (SSD/HDD).'
+      ]
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -610,7 +631,12 @@ export const QUESTION_BANK: Question[] = [
     ],
     correctOptionId: 'B',
     explanation: {
-      mainConcept: 'Absolute referencing ($A$1) prevents coordinates from shifting during formula autofill.'
+      mainConcept: 'Absolute referencing ($A$1) prevents coordinates from shifting during formula autofill.',
+      stepByStep: [
+        'Relative referencing (e.g. A1) shifts when dragged across rows/columns.',
+        'Absolute referencing locks the reference using the dollar sign ($A$1).',
+        'In MS Excel, pressing the F4 key toggles through relative, mixed ($A1, A$1), and absolute ($A$1) references.'
+      ]
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
@@ -635,7 +661,12 @@ export const QUESTION_BANK: Question[] = [
     ],
     correctOptionId: 'A',
     explanation: {
-      mainConcept: 'Phishing is social engineering deceptive impersonation to harvest sensitive credentials.'
+      mainConcept: 'Phishing is social engineering deceptive impersonation to harvest sensitive credentials.',
+      stepByStep: [
+        'Understand the definition: Attackers send counterfeit emails posing as banks, employers, or trusted brands.',
+        'The victim is lured into clicking a fake link and entering credentials.',
+        'This technique is known as Phishing (or Spear Phishing when targeted).'
+      ]
     },
     sourceType: 'verified_pyq',
     examYear: 2023,
