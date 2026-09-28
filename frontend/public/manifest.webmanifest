@@ -1,11 +1,11 @@
-﻿{
-  "name": "TrustHire AI — Opportunity Verification System",
-  "short_name": "TrustHire",
-  "description": "Verify before you trust. Verify before you pay. Autonomous AI verification assistant to investigate job offers, recruiters, and companies.",
+{
+  "name": "CHSL Mastery — SSC CHSL 2026 Complete Preparation Platform",
+  "short_name": "CHSL Mastery",
+  "description": "Comprehensive, student-focused preparation platform for SSC CHSL 2026. Official syllabus, 13-stage concept lessons, verified PYQs, authentic CBE mock tests, and typing simulator.",
   "start_url": "/?source=pwa",
   "display": "standalone",
-  "background_color": "#090d16",
-  "theme_color": "#090d16",
+  "background_color": "#070a12",
+  "theme_color": "#070a12",
   "orientation": "portrait-primary",
   "icons": [
     {

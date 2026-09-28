@@ -1,5 +1,5 @@
-﻿// TrustHire AI Service Worker
-const CACHE_NAME = 'trusthire-cache-v1';
+// CHSL Mastery Service Worker
+const CACHE_NAME = 'chsl-mastery-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
